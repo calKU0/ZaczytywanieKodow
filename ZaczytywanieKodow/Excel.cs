@@ -12,24 +12,26 @@ using System.Net.Sockets;
 using System.Data;
 using System.Drawing;
 using System.Diagnostics;
+using System.IO;
 
 namespace ZaczytywanieKodow
 {
     public class Excel
     {
-        public string? kodSystemowy { get; set; }
-        public string? kodDostawcy { get; set; }
-        public string? kodOem { get; set; }
-        public string? dostawca { get; set; }
-        public int? wyszukiwania { get; set; }
-        public string? polaczoneNumery { get; set; }
+        public string kodSystemowy { get; set; }
+        public string kodDostawcy { get; set; }
+        public string kodOem { get; set; }
+        public string dostawca { get; set; }
+        public int wyszukiwania { get; set; }
+        public string polaczoneNumery { get; set; }
         public static List<string> kodySystemoweLista = new List<string>();
-        public int IloscWierszy { get; set; } 
-        private string? nazwaPliku { get; set; }
+        public static List<string> dostawcyLista = new List<string>();
+        public int IloscWierszy { get; set; }
+        private string nazwaPliku { get; set; }
         private bool czyPlikOtwarty { get; set; } = false;
-        private WorkBook? plikExcel { get; set; }
-        private WorkSheet? arkusz { get; set; }
-        private SqlConnection? connection { get; set; }
+        private WorkBook plikExcel { get; set; }
+        private WorkSheet arkusz { get; set; }
+        private SqlConnection connection { get; set; }
         private readonly string connectionString = ConfigurationManager.ConnectionStrings["GaskaConnectionString"].ConnectionString;
 
         public Excel(string nazwaPliku)
@@ -39,9 +41,13 @@ namespace ZaczytywanieKodow
 
         public void Otworz()
         {
-            plikExcel = WorkBook.Load(nazwaPliku);
-            arkusz = plikExcel.WorkSheets.First();
-            czyPlikOtwarty = true;
+            try
+            {
+                plikExcel = WorkBook.Load(nazwaPliku);
+                arkusz = plikExcel.WorkSheets.First();
+                czyPlikOtwarty = true;
+            }
+            catch (FileNotFoundException ex) { Prompt.ShowDialog("Nie otwarto pliku", "Błąd"); }
         }
 
         public int PobierzIloscWierszy()
@@ -57,16 +63,15 @@ namespace ZaczytywanieKodow
                 if (czyPlikOtwarty == true)
                 {
                     //Prompt.ShowDialog(arkusz["B" + numerWiersza.ToString()].StringValue, "DEBUG");
-                    kodDostawcy = arkusz["B" + numerWiersza.ToString()].StringValue == null ? "" : arkusz["B" + numerWiersza.ToString()].StringValue.Replace(System.Environment.NewLine,"");
+                    kodDostawcy = arkusz["B" + numerWiersza.ToString()].StringValue == null ? "" : arkusz["B" + numerWiersza.ToString()].StringValue.Replace(System.Environment.NewLine, "");
                     kodOem = arkusz["C" + numerWiersza.ToString()].StringValue == null ? "" : arkusz["C" + numerWiersza.ToString()].StringValue.Replace(System.Environment.NewLine, "");
 
-                    string query = @"SELECT twr_kod, knt_akronim,(SELECT count(R_twr_twrid) FROM [serwer-sql].[nowe_b2b].[ldd].[RptTowary] with (nolock) WHERE Twr_GIDNumer = R_twr_twrid) as [wyszukiwania]
-                                    from cdn.twrkody with (nolock)
-                                    left join cdn.twrkarty with (nolock) on Twr_GIDNumer=TwK_TwrNumer  
-                                    left join cdn.twrdost with (nolock) on Twr_GIDNumer=TWD_TwrNumer
-                                    join cdn.TwrKodyKnt with (nolock) on TwK_Id=TKK_TwKId
-                                    join cdn.kntkarty with (nolock) on knt_gidnumer = twd_kntnumer
-                                    WHERE twk_kod = @kodDostawcy";
+                    string query = @"SELECT isnull(twr_kod,'') as twrKod, isnull(knt_akronim,'') as kntAkronim, podzapytanie.wyszukiwania as wyszukiwania
+                                    from (SELECT count(R_twr_twrid) as wyszukiwania FROM [serwer-sql].[nowe_b2b].[ldd].[RptTowary] with (nolock) where r_twr_Zapytanie = @kodOem) podzapytanie
+									left join cdn.twrAplikacjeOpisy with (nolock) on TPO_OpisKrotki like '%" + kodOem + @"%' 
+                                    left join cdn.twrkarty with (nolock) on Twr_GIDTyp=TPO_ObiTyp AND Twr_GIDNumer=TPO_ObiNumer and Twr_Archiwalny = 0
+                                    left join cdn.twrdost with (nolock) on Twr_GIDNumer=TWD_TwrNumer and TWD_KlasaKnt = 8
+                                    left join cdn.kntkarty with (nolock) on knt_gidnumer = twd_kntnumer";
 
                     string queryRowCount = "SELECT @@ROWCOUNT";
 
@@ -75,19 +80,18 @@ namespace ZaczytywanieKodow
 
                     SqlCommand selectCommand = new SqlCommand(query, connection);
                     SqlCommand selectRowCountCommand = new SqlCommand(queryRowCount, connection);
-                    selectCommand.Parameters.AddWithValue("@kodDostawcy", kodDostawcy);
+                    selectCommand.Parameters.AddWithValue("@kodOem", kodOem);
                     using (SqlDataReader dr = selectCommand.ExecuteReader())
                     {
                         IloscWierszy = (int)selectRowCountCommand.ExecuteScalar();
-                        Debug.WriteLine(IloscWierszy);
                         if (dr.HasRows)
                         {
                             while (dr.Read())
                             {
                                 if (IloscWierszy == 1)
                                 {
-                                    kodSystemowy = (string)dr["twr_kod"];
-                                    dostawca = (string)dr["knt_akronim"];
+                                    kodSystemowy = (string)dr["twrKod"];
+                                    dostawca = (string)dr["kntAkronim"];
                                     wyszukiwania = (int)dr["wyszukiwania"];
                                 }
                             }
@@ -100,33 +104,33 @@ namespace ZaczytywanieKodow
             }
             catch (Exception e) { Prompt.ShowDialog("Wystąpił problem w zaczytywaniu pliku" + e.ToString(), "Błąd"); }
         }
-        public static List<string> WyszukajDane(string kodDostawcy)
+        public static List<string> WyszukajDane(string kodOem)
         {
             try
             {
-                SqlConnection? connection;
+                SqlConnection connection;
                 string connectionString = ConfigurationManager.ConnectionStrings["GaskaConnectionString"].ConnectionString;
                 kodySystemoweLista.Clear();
-                string query = @"SELECT twr_kod, knt_akronim,(SELECT count(R_twr_twrid) FROM [serwer-sql].[nowe_b2b].[ldd].[RptTowary] with (nolock) WHERE Twr_GIDNumer = R_twr_twrid) as [wyszukiwania]
-                                    from cdn.twrkody with (nolock)
-                                    left join cdn.twrkarty with (nolock) on Twr_GIDNumer=TwK_TwrNumer  
-                                    left join cdn.twrdost with (nolock) on Twr_GIDNumer=TWD_TwrNumer
-                                    join cdn.kntkarty with (nolock) on knt_gidnumer = twd_kntnumer
-                                    join cdn.TwrKodyKnt with (nolock) on TwK_Id=TKK_TwKId
-                                    WHERE twk_kod = @kodDostawcy";
+                dostawcyLista.Clear();
+                string query = @"SELECT isnull(twr_kod,'') as twrKod, isnull(knt_akronim,'') as kntAkronim, podzapytanie.wyszukiwania as wyszukiwania
+                                    from (SELECT count(R_twr_twrid) as wyszukiwania FROM [serwer-sql].[nowe_b2b].[ldd].[RptTowary] with (nolock) where r_twr_Zapytanie = @kodOem) podzapytanie
+									left join cdn.twrAplikacjeOpisy with (nolock) on TPO_OpisKrotki like '%" + kodOem + @"%' 
+                                    left join cdn.twrkarty with (nolock) on Twr_GIDTyp=TPO_ObiTyp AND Twr_GIDNumer=TPO_ObiNumer and Twr_Archiwalny = 0
+                                    left join cdn.twrdost with (nolock) on Twr_GIDNumer=TWD_TwrNumer and TWD_KlasaKnt = 8
+                                    left join cdn.kntkarty with (nolock) on knt_gidnumer = twd_kntnumer";
 
                 connection = new SqlConnection(connectionString);
                 connection.Open();
 
                 SqlCommand selectCommand = new SqlCommand(query, connection);
-                selectCommand.Parameters.AddWithValue("@kodDostawcy", kodDostawcy);
+                selectCommand.Parameters.AddWithValue("@kodOem", kodOem);
                 using (SqlDataReader dr = selectCommand.ExecuteReader())
                 {
                     if (dr.HasRows)
                     {
                         while (dr.Read())
                         {
-                            kodySystemoweLista.Add((string)dr["twr_kod"]);
+                            kodySystemoweLista.Add((string)dr["twrKod"]);
                         }
                     }
                 }

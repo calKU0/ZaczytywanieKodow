@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZaczytywanieKodow", "ZaczytywanieKodow\ZaczytywanieKodow.csproj", "{613C6D5A-D002-48A3-811C-A1322538148D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmoothProgressBar", "SmoothProgressBar\SmoothProgressBar.csproj", "{3A95585A-F226-46C6-9D17-895D2F90B2AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZaczytywanieKodow", "ZaczytywanieKodow\ZaczytywanieKodow.csproj", "{2175F7C1-1972-40DB-A715-8A6DC149E04F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{613C6D5A-D002-48A3-811C-A1322538148D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{613C6D5A-D002-48A3-811C-A1322538148D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{613C6D5A-D002-48A3-811C-A1322538148D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{613C6D5A-D002-48A3-811C-A1322538148D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A95585A-F226-46C6-9D17-895D2F90B2AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A95585A-F226-46C6-9D17-895D2F90B2AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A95585A-F226-46C6-9D17-895D2F90B2AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A95585A-F226-46C6-9D17-895D2F90B2AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2175F7C1-1972-40DB-A715-8A6DC149E04F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2175F7C1-1972-40DB-A715-8A6DC149E04F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2175F7C1-1972-40DB-A715-8A6DC149E04F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2175F7C1-1972-40DB-A715-8A6DC149E04F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

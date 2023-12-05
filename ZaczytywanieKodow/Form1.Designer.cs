@@ -30,126 +30,135 @@ namespace ZaczytywanieKodow
         /// </summary>
         private void InitializeComponent()
         {
-            WybierzPlikButton = new Button();
-            nazwaPlikuTextBox = new TextBox();
-            ZaczytajButton = new Button();
-            kodyLista = new DataGridView();
-            kodSystem = new DataGridViewButtonColumn();
-            kodDostawcy = new DataGridViewTextBoxColumn();
-            kodOem = new DataGridViewTextBoxColumn();
-            dostawca = new DataGridViewTextBoxColumn();
-            wyszukiwania = new DataGridViewTextBoxColumn();
-            polaczoneNumery = new DataGridViewTextBoxColumn();
-            ((System.ComponentModel.ISupportInitialize)kodyLista).BeginInit();
-            SuspendLayout();
+            this.WybierzPlikButton = new System.Windows.Forms.Button();
+            this.nazwaPlikuTextBox = new System.Windows.Forms.TextBox();
+            this.ZaczytajButton = new System.Windows.Forms.Button();
+            this.kodyLista = new System.Windows.Forms.DataGridView();
+            this.kodSystem = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.kodDostawcy = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.kodOem = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dostawca = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.wyszukiwania = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.polaczoneNumery = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.smoothProgressBar1 = new SmoothProgressBar.SmoothProgressBar();
+            ((System.ComponentModel.ISupportInitialize)(this.kodyLista)).BeginInit();
+            this.SuspendLayout();
             // 
             // WybierzPlikButton
             // 
-            WybierzPlikButton.Location = new System.Drawing.Point(1508, 12);
-            WybierzPlikButton.Name = "WybierzPlikButton";
-            WybierzPlikButton.Size = new System.Drawing.Size(144, 23);
-            WybierzPlikButton.TabIndex = 0;
-            WybierzPlikButton.Text = "Wybierz Plik";
-            WybierzPlikButton.UseVisualStyleBackColor = true;
-            WybierzPlikButton.Click += WybierzPlikButton_Click;
+            this.WybierzPlikButton.Location = new System.Drawing.Point(469, 13);
+            this.WybierzPlikButton.Name = "WybierzPlikButton";
+            this.WybierzPlikButton.Size = new System.Drawing.Size(144, 23);
+            this.WybierzPlikButton.TabIndex = 0;
+            this.WybierzPlikButton.Text = "Wybierz Plik";
+            this.WybierzPlikButton.UseVisualStyleBackColor = true;
+            this.WybierzPlikButton.Click += new System.EventHandler(this.WybierzPlikButton_Click);
             // 
             // nazwaPlikuTextBox
             // 
-            nazwaPlikuTextBox.Location = new System.Drawing.Point(1054, 12);
-            nazwaPlikuTextBox.Name = "nazwaPlikuTextBox";
-            nazwaPlikuTextBox.ReadOnly = true;
-            nazwaPlikuTextBox.Size = new System.Drawing.Size(439, 23);
-            nazwaPlikuTextBox.TabIndex = 1;
+            this.nazwaPlikuTextBox.Location = new System.Drawing.Point(12, 13);
+            this.nazwaPlikuTextBox.Name = "nazwaPlikuTextBox";
+            this.nazwaPlikuTextBox.ReadOnly = true;
+            this.nazwaPlikuTextBox.Size = new System.Drawing.Size(439, 20);
+            this.nazwaPlikuTextBox.TabIndex = 1;
             // 
             // ZaczytajButton
             // 
-            ZaczytajButton.BackColor = SystemColors.ButtonFace;
-            ZaczytajButton.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            ZaczytajButton.FlatAppearance.BorderSize = 2;
-            ZaczytajButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Lime;
-            ZaczytajButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Silver;
-            ZaczytajButton.FlatStyle = FlatStyle.Flat;
-            ZaczytajButton.Font = new Font("Segoe UI", 13F, FontStyle.Regular, GraphicsUnit.Point);
-            ZaczytajButton.Location = new System.Drawing.Point(1466, 880);
-            ZaczytajButton.Name = "ZaczytajButton";
-            ZaczytajButton.Size = new System.Drawing.Size(186, 55);
-            ZaczytajButton.TabIndex = 2;
-            ZaczytajButton.Text = "Zaczytaj";
-            ZaczytajButton.UseVisualStyleBackColor = false;
-            ZaczytajButton.Click += ZaczytajButton_Click;
+            this.ZaczytajButton.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.ZaczytajButton.FlatAppearance.BorderSize = 2;
+            this.ZaczytajButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Lime;
+            this.ZaczytajButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Silver;
+            this.ZaczytajButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ZaczytajButton.Location = new System.Drawing.Point(1466, 880);
+            this.ZaczytajButton.Name = "ZaczytajButton";
+            this.ZaczytajButton.Size = new System.Drawing.Size(186, 55);
+            this.ZaczytajButton.TabIndex = 2;
+            this.ZaczytajButton.Text = "Zaczytaj";
+            this.ZaczytajButton.UseVisualStyleBackColor = false;
+            this.ZaczytajButton.Click += new System.EventHandler(this.ZaczytajButton_Click);
             // 
             // kodyLista
             // 
-            kodyLista.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            kodyLista.Location = new System.Drawing.Point(12, 61);
-            kodyLista.Name = "kodyLista";
-            kodyLista.RowTemplate.Height = 25;
-            kodyLista.Size = new System.Drawing.Size(1169, 493);
-            kodyLista.TabIndex = 3;
-            kodyLista.AllowUserToAddRows = false;
-            kodyLista.AllowUserToDeleteRows = false;
-            kodyLista.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(kodyLista_CellClick);
-
-            //
+            this.kodyLista.AllowUserToAddRows = false;
+            this.kodyLista.AllowUserToDeleteRows = false;
+            this.kodyLista.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.kodyLista.Location = new System.Drawing.Point(12, 61);
+            this.kodyLista.Name = "kodyLista";
+            this.kodyLista.RowTemplate.Height = 25;
+            this.kodyLista.Size = new System.Drawing.Size(1169, 874);
+            this.kodyLista.TabIndex = 3;
+            this.kodyLista.CellClick += new DataGridViewCellEventHandler(this.kodyLista_CellClick);
+            // 
             // kodSystem
             // 
-            kodSystem.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-            kodSystem.HeaderText = "Kod Systemowy";
-            kodSystem.Name = "kodSystem";
+            this.kodSystem.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.kodSystem.HeaderText = "Kod Systemowy";
+            this.kodSystem.Name = "kodSystem";
             // 
             // kodDostawcy
             // 
-            kodDostawcy.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-            kodDostawcy.HeaderText = "Kod Dostawcy";
-            kodDostawcy.Name = "kodDostawcy";
-            kodDostawcy.ReadOnly = true;
+            this.kodDostawcy.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.kodDostawcy.HeaderText = "Kod Dostawcy";
+            this.kodDostawcy.Name = "kodDostawcy";
+            this.kodDostawcy.ReadOnly = true;
             // 
             // kodOem
             // 
-            kodOem.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            kodOem.HeaderText = "OEM";
-            kodOem.Name = "kodOem";
-            kodOem.ReadOnly = true;
+            this.kodOem.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.kodOem.HeaderText = "OEM";
+            this.kodOem.Name = "kodOem";
+            this.kodOem.ReadOnly = true;
             // 
             // dostawca
             // 
-            dostawca.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-            dostawca.HeaderText = "Dostawca";
-            dostawca.Name = "dostawca";
-            dostawca.ReadOnly = true;
+            this.dostawca.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.dostawca.HeaderText = "Dostawca";
+            this.dostawca.Name = "dostawca";
+            this.dostawca.ReadOnly = true;
             // 
             // wyszukiwania
             // 
-            wyszukiwania.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-            wyszukiwania.HeaderText = "Wyszukiwania";
-            wyszukiwania.Name = "wyszukiwania";
-            wyszukiwania.ReadOnly = true;
+            this.wyszukiwania.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.wyszukiwania.HeaderText = "Wyszukiwania";
+            this.wyszukiwania.Name = "wyszukiwania";
+            this.wyszukiwania.ReadOnly = true;
             // 
             // polaczoneNumery
             // 
-            polaczoneNumery.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-            polaczoneNumery.HeaderText = "Połączone Numery";
-            polaczoneNumery.Name = "polaczoneNumery";
-            polaczoneNumery.ReadOnly = true;
+            this.polaczoneNumery.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.polaczoneNumery.HeaderText = "Połączone Numery";
+            this.polaczoneNumery.Name = "polaczoneNumery";
+            this.polaczoneNumery.ReadOnly = true;
+            // 
+            // smoothProgressBar1
+            // 
+            this.smoothProgressBar1.Location = new System.Drawing.Point(674, 11);
+            this.smoothProgressBar1.Name = "smoothProgressBar1";
+            this.smoothProgressBar1.ProgressBarColor = System.Drawing.Color.Lime;
+            this.smoothProgressBar1.Size = new System.Drawing.Size(507, 25);
+            this.smoothProgressBar1.TabIndex = 4;
+            this.smoothProgressBar1.Value = 0;
+            this.smoothProgressBar1.Visible = false;
             // 
             // Form1
             // 
-            AutoScaleMode = AutoScaleMode.Inherit;
-            AutoSize = true;
-            AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            ClientSize = new System.Drawing.Size(1664, 947);
-            Controls.Add(kodyLista);
-            Controls.Add(ZaczytajButton);
-            Controls.Add(nazwaPlikuTextBox);
-            Controls.Add(WybierzPlikButton);
-            ForeColor = SystemColors.ControlText;
-            HelpButton = true;
-            Name = "Form1";
-            Text = "Form1";
-            WindowState = FormWindowState.Maximized;
-            ((System.ComponentModel.ISupportInitialize)kodyLista).EndInit();
-            ResumeLayout(false);
-            PerformLayout();
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+            this.AutoSize = true;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ClientSize = new System.Drawing.Size(1664, 947);
+            this.Controls.Add(this.smoothProgressBar1);
+            this.Controls.Add(this.kodyLista);
+            this.Controls.Add(this.ZaczytajButton);
+            this.Controls.Add(this.nazwaPlikuTextBox);
+            this.Controls.Add(this.WybierzPlikButton);
+            this.HelpButton = true;
+            this.Name = "Form1";
+            this.Text = "Form1";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            ((System.ComponentModel.ISupportInitialize)(this.kodyLista)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion
@@ -164,5 +173,6 @@ namespace ZaczytywanieKodow
         private DataGridViewTextBoxColumn dostawca;
         private DataGridViewTextBoxColumn wyszukiwania;
         private DataGridViewTextBoxColumn polaczoneNumery;
+        private SmoothProgressBar.SmoothProgressBar smoothProgressBar1;
     }
 }

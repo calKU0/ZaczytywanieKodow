@@ -13,10 +13,11 @@ namespace ZaczytywanieKodow
     public partial class WyborTowaru : Form
     {
         public string ReturnValue1 { get; set; }
+        public string ReturnValue2 { get; set; }
         public WyborTowaru(List<string> kodySystem)
         {
             InitializeComponent();
-            foreach(string k in kodySystem) 
+            foreach (string k in kodySystem)
             {
                 dataGridView1.Rows.Add(k);
             }
@@ -24,6 +25,7 @@ namespace ZaczytywanieKodow
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             ReturnValue1 = dataGridView1.Rows[e.RowIndex].Cells["kodSystem"].Value.ToString();
+            ReturnValue2 = dataGridView1.Rows[e.RowIndex].Cells["dostawca"].Value.ToString();
 
             this.DialogResult = DialogResult.OK;
             this.Close();
