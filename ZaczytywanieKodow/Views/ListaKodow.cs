@@ -2,12 +2,16 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System;
+using System.Collections.Generic;
+using ZaczytywanieKodow.Models;
+using System.Linq;
 
 namespace ZaczytywanieKodow
 {
-    public partial class Form1 : Form
+    public partial class ListaKodow : Form
     {
-        public Form1()
+        private List<Item> items { get; set; }
+        public ListaKodow()
         {
             InitializeComponent();
         }
@@ -27,6 +31,7 @@ namespace ZaczytywanieKodow
 
         private void ZaczytajButton_Click(object sender, EventArgs e)
         {
+            items = new List<Item>();
             ZaczytajButton.BackColor = System.Drawing.Color.Lime;
             kodyLista.Columns.AddRange(new DataGridViewColumn[] { kodSystem, kodDostawcy, kodOem, dostawca, wyszukiwania, polaczoneNumery });
             Excel plik = new Excel(nazwaPlikuTextBox.Text);
@@ -39,23 +44,25 @@ namespace ZaczytywanieKodow
 
             for (int i = 2; i <= plik.PobierzIloscWierszy() + 2; i++)
             {
+                Item item = plik.Czytaj(i);
+                if (item.KodOem == "") { break; } 
+                item.Id = i - 2;
+                item.PolaczoneKody = "";
+                items.Add(item);
+                if (i % 5 == 0) { Application.DoEvents(); }
                 this.smoothProgressBar1.Value++;
-                plik.WyszukajDane(i);
-                if (plik.kodOem != "")
-                {
-                    if (plik.IloscWierszy == 1)
-                    {
-                        kodyLista.Rows.Add(plik.kodSystemowy, plik.kodDostawcy, plik.kodOem, plik.dostawca, plik.wyszukiwania, "test");
 
-                        //Co 10 wype³nieñ odœwie¿amy stronê. Nie ustawiaæ czêœciej, bo mo¿e wolniej zaczytywaæ
-                        if (i%5 == 0){ Application.DoEvents(); }
-                    }
-                    else
-                    {
-                        kodyLista.Rows.Add("Wybierz", "", plik.kodOem, "", "", "");
-                    }
+            }
+            foreach (var item in items)
+            {
+                if (item.KodSystem.Count == 1)
+                {
+                    kodyLista.Rows.Add(item.KodSystem[0], item.KodDostawcy, item.KodOem, item.Dostawca[0], item.Wyszukiwania, item.PolaczoneKody);
                 }
-                else { break; }
+                else
+                {
+                    kodyLista.Rows.Add("Wybierz", item.KodDostawcy, item.KodOem, "", item.Wyszukiwania, item.PolaczoneKody);
+                }
             }
         }
 
@@ -63,14 +70,17 @@ namespace ZaczytywanieKodow
         {
             if (e.ColumnIndex == kodyLista.Columns["kodSystem"].Index && e.RowIndex >= 0 && (string)kodyLista.Rows[e.RowIndex].Cells["kodSystem"].Value == "Wybierz")
             {
-                using (var forma = new WyborTowaru(Excel.WyszukajDane((string)kodyLista.Rows[e.RowIndex].Cells["kodOem"].Value)))
+                var item = items.Where((Item arg) => arg.Id == e.RowIndex).FirstOrDefault();
+                using (var forma = new WyborTowaru(item))
                 {
                     var result = forma.ShowDialog();
 
                     if (result == DialogResult.OK) // jesli forma zwraca wynik
                     {
-                        string wybrany_towar = forma.ReturnValue1;
-                        kodyLista.Rows[e.RowIndex].Cells["kodSystem"].Value = wybrany_towar;
+                        string wybranyKod = forma.ReturnValue1;
+                        string dostawca = forma.ReturnValue2;
+                        kodyLista.Rows[e.RowIndex].Cells["kodSystem"].Value = wybranyKod;
+                        kodyLista.Rows[e.RowIndex].Cells["dostawca"].Value = dostawca;
                     }
                 }
             }

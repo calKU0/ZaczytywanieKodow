@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ZaczytywanieKodow.Models;
 
 namespace ZaczytywanieKodow
 {
@@ -14,12 +15,12 @@ namespace ZaczytywanieKodow
     {
         public string ReturnValue1 { get; set; }
         public string ReturnValue2 { get; set; }
-        public WyborTowaru(List<string> kodySystem)
+        public WyborTowaru(Item item)
         {
             InitializeComponent();
-            foreach (string k in kodySystem)
+            for (int i = 0; i < item.KodSystem.Count && i < item.Dostawca.Count; i++)
             {
-                dataGridView1.Rows.Add(k);
+                dataGridView1.Rows.Add(item.KodSystem[i], item.Dostawca[i]);
             }
         }
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)

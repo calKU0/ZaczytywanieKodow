@@ -2,7 +2,7 @@
 
 namespace ZaczytywanieKodow
 {
-    partial class Form1
+    partial class ListaKodow
     {
         /// <summary>
         ///  Required designer variable.
@@ -140,7 +140,7 @@ namespace ZaczytywanieKodow
             this.smoothProgressBar1.Value = 0;
             this.smoothProgressBar1.Visible = false;
             // 
-            // Form1
+            // ListaKodow
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.AutoSize = true;
@@ -152,8 +152,8 @@ namespace ZaczytywanieKodow
             this.Controls.Add(this.nazwaPlikuTextBox);
             this.Controls.Add(this.WybierzPlikButton);
             this.HelpButton = true;
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "ListaKodow";
+            this.Text = "Lista Kodów";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             ((System.ComponentModel.ISupportInitialize)(this.kodyLista)).EndInit();
             this.ResumeLayout(false);
