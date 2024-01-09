@@ -15,6 +15,7 @@ namespace ZaczytywanieKodow.Models
         public List<string> Dostawca { get; set; }
         public int Wyszukiwania { get; set; }
         public string PolaczoneKody { get; set; }
+        public bool WieleKodow { get; set; }
 
         public Item()
         {
