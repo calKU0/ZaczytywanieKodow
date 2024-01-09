@@ -32,14 +32,16 @@ namespace ZaczytywanieKodow
         private void InitializeComponent()
         {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.kodSystem = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dostawca = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
             // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.kodSystem,
@@ -47,42 +49,41 @@ namespace ZaczytywanieKodow
             this.dataGridView1.Location = new System.Drawing.Point(10, 70);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 25;
-            this.dataGridView1.Size = new System.Drawing.Size(665, 309);
+            this.dataGridView1.Size = new System.Drawing.Size(309, 309);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
+            // 
+            // kodSystem
+            // 
+            this.kodSystem.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.kodSystem.HeaderText = "Kod systemowy";
+            this.kodSystem.Name = "kodSystem";
+            this.kodSystem.ReadOnly = true;
+            // 
+            // dostawca
+            // 
+            this.dostawca.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dostawca.HeaderText = "Dostawca";
+            this.dostawca.Name = "dostawca";
+            this.dostawca.ReadOnly = true;
             // 
             // textBox1
             // 
             this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox1.Font = new System.Drawing.Font("Segoe UI", 25F);
-            this.textBox1.Location = new System.Drawing.Point(10, 10);
+            this.textBox1.Location = new System.Drawing.Point(10, 12);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(374, 45);
+            this.textBox1.Size = new System.Drawing.Size(311, 45);
             this.textBox1.TabIndex = 1;
             this.textBox1.Text = "Wybierz nasz kod XL";
-            // 
-            // kodSystem
-            // 
-            this.kodSystem.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.kodSystem.HeaderText = "Kod systemowy";
-            this.kodSystem.Name = "kodSystem";
-            this.kodSystem.ReadOnly = true;
-            this.kodSystem.Width = 97;
-            // 
-            // dostawca
-            // 
-            this.dostawca.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.dostawca.HeaderText = "Dostawca";
-            this.dostawca.Name = "dostawca";
-            this.dostawca.ReadOnly = true;
-            this.dostawca.Width = 80;
+            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // WyborTowaru
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(686, 390);
+            this.ClientSize = new System.Drawing.Size(331, 390);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.dataGridView1);
             this.Name = "WyborTowaru";

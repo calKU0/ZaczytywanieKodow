@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using ZaczytywanieKodow.Properties;
 
 namespace ZaczytywanieKodow
 {
@@ -29,7 +30,8 @@ namespace ZaczytywanieKodow
         ///  the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
-        {
+        { 
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ListaKodow));
             this.WybierzPlikButton = new System.Windows.Forms.Button();
             this.nazwaPlikuTextBox = new System.Windows.Forms.TextBox();
             this.ZaczytajButton = new System.Windows.Forms.Button();
@@ -40,9 +42,12 @@ namespace ZaczytywanieKodow
             this.dostawca = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.wyszukiwania = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.polaczoneNumery = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.szczegoly = new System.Windows.Forms.DataGridViewButtonColumn();
             this.smoothProgressBar1 = new SmoothProgressBar.SmoothProgressBar();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.AnulujButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.kodyLista)).BeginInit();
             this.SuspendLayout();
             // 
@@ -66,11 +71,10 @@ namespace ZaczytywanieKodow
             // 
             // ZaczytajButton
             // 
-            this.ZaczytajButton.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.ZaczytajButton.FlatAppearance.BorderSize = 2;
-            this.ZaczytajButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Lime;
-            this.ZaczytajButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Silver;
-            this.ZaczytajButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ZaczytajButton.BackColor = System.Drawing.SystemColors.Control;
+            this.ZaczytajButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.ZaczytajButton.Image = ((System.Drawing.Image)(resources.GetObject("ZaczytajButton.Image")));
+            this.ZaczytajButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.ZaczytajButton.Location = new System.Drawing.Point(1466, 880);
             this.ZaczytajButton.Name = "ZaczytajButton";
             this.ZaczytajButton.Size = new System.Drawing.Size(186, 55);
@@ -82,11 +86,11 @@ namespace ZaczytywanieKodow
             // kodyLista
             // 
             this.kodyLista.AllowUserToAddRows = false;
-            this.kodyLista.RowHeadersVisible = false;
             this.kodyLista.AllowUserToDeleteRows = false;
             this.kodyLista.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.kodyLista.Location = new System.Drawing.Point(12, 87);
             this.kodyLista.Name = "kodyLista";
+            this.kodyLista.RowHeadersVisible = false;
             this.kodyLista.RowTemplate.Height = 25;
             this.kodyLista.Size = new System.Drawing.Size(1406, 848);
             this.kodyLista.TabIndex = 3;
@@ -134,6 +138,13 @@ namespace ZaczytywanieKodow
             this.polaczoneNumery.Name = "polaczoneNumery";
             this.polaczoneNumery.ReadOnly = true;
             // 
+            // szczegoly
+            // 
+            this.szczegoly.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.szczegoly.HeaderText = "Szczegóły";
+            this.szczegoly.Name = "szczegoly";
+            this.szczegoly.ReadOnly = true;
+            // 
             // smoothProgressBar1
             // 
             this.smoothProgressBar1.Location = new System.Drawing.Point(674, 11);
@@ -169,6 +180,32 @@ namespace ZaczytywanieKodow
             this.textBox2.TabIndex = 6;
             this.textBox2.Visible = false;
             // 
+            // textBox3
+            // 
+            this.textBox3.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.textBox3.Location = new System.Drawing.Point(674, 42);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.ReadOnly = true;
+            this.textBox3.Size = new System.Drawing.Size(62, 19);
+            this.textBox3.TabIndex = 5;
+            this.textBox3.Visible = false;
+            // 
+            // AnulujButton
+            // 
+            this.AnulujButton.BackColor = System.Drawing.SystemColors.Control;
+            this.AnulujButton.Enabled = false;
+            this.AnulujButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.AnulujButton.Image = global::ZaczytywanieKodow.Properties.Resources.cancel;
+            this.AnulujButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.AnulujButton.Location = new System.Drawing.Point(1466, 819);
+            this.AnulujButton.Name = "AnulujButton";
+            this.AnulujButton.Size = new System.Drawing.Size(186, 55);
+            this.AnulujButton.TabIndex = 2;
+            this.AnulujButton.Text = "Anuluj";
+            this.AnulujButton.UseVisualStyleBackColor = false;
+            this.AnulujButton.Click += new System.EventHandler(this.AnulujButton_Click);
+            // 
             // ListaKodow
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
@@ -176,9 +213,11 @@ namespace ZaczytywanieKodow
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(1664, 947);
             this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.textBox3);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.smoothProgressBar1);
             this.Controls.Add(this.kodyLista);
+            this.Controls.Add(this.AnulujButton);
             this.Controls.Add(this.ZaczytajButton);
             this.Controls.Add(this.nazwaPlikuTextBox);
             this.Controls.Add(this.WybierzPlikButton);
@@ -204,8 +243,11 @@ namespace ZaczytywanieKodow
         private DataGridViewTextBoxColumn dostawca;
         private DataGridViewTextBoxColumn wyszukiwania;
         private DataGridViewTextBoxColumn polaczoneNumery;
+        private DataGridViewButtonColumn szczegoly;
         private SmoothProgressBar.SmoothProgressBar smoothProgressBar1;
         private TextBox textBox1;
         private TextBox textBox2;
+        private TextBox textBox3;
+        private Button AnulujButton;
     }
 }
