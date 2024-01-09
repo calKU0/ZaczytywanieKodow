@@ -41,7 +41,7 @@ namespace ZaczytywanieKodow
             else { Prompt.ShowDialog("Nie otwarto pliku", "Ostrzeżenie"); return 0; }
         }
 
-        public Item Czytaj(int numerWiersza)
+        public Item CzytajWiersz(int numerWiersza)
         {
             Item item = new Item();
             try
@@ -60,28 +60,29 @@ namespace ZaczytywanieKodow
 
                     string queryRowCount = "SELECT @@ROWCOUNT";
 
-                    connection = new SqlConnection(connectionString);
-                    connection.Open();
-
-                    SqlCommand selectCommand = new SqlCommand(query, connection);
-                    SqlCommand selectRowCountCommand = new SqlCommand(queryRowCount, connection);
-                    selectCommand.Parameters.AddWithValue("@kodOem", item.KodOem);
-                    using (SqlDataReader dr = selectCommand.ExecuteReader())
+                    using (SqlConnection connection = new SqlConnection(connectionString))
                     {
-                        IloscWierszy = (int)selectRowCountCommand.ExecuteScalar();
-                        if (dr.HasRows)
+                        connection.Open();
+                        SqlCommand selectCommand = new SqlCommand(query, connection);
+                        SqlCommand selectRowCountCommand = new SqlCommand(queryRowCount, connection);
+                        selectCommand.Parameters.AddWithValue("@kodOem", item.KodOem);
+                        using (SqlDataReader dr = selectCommand.ExecuteReader())
                         {
-                            while (dr.Read())
+                            IloscWierszy = (int)selectRowCountCommand.ExecuteScalar();
+                            if (dr.HasRows)
                             {
-                                item.KodSystem.Add((string)dr["twrKod"]);
-                                item.Dostawca.Add((string)dr["kntAkronim"]);
-                                item.Wyszukiwania = (int)dr["wyszukiwania"];
+                                while (dr.Read())
+                                {
+                                    item.KodSystem.Add((string)dr["twrKod"]);
+                                    item.Dostawca.Add((string)dr["kntAkronim"]);
+                                    item.Wyszukiwania = (int)dr["wyszukiwania"];
+                                    if (IloscWierszy > 1) { item.WieleKodow = true; }
+                                }
                             }
+                            else { item.KodSystem.Add(""); item.WieleKodow = false; }
                         }
-                        else { item.KodSystem.Add(""); }
+                        return item;
                     }
-                    connection.Close();
-                    return item;
                 }
                 else { Prompt.ShowDialog("Nie otwarto pliku", "Ostrzeżenie"); return item; }
             }
