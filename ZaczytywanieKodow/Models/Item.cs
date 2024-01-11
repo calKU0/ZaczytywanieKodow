@@ -9,6 +9,7 @@ namespace ZaczytywanieKodow.Models
     public class Item
     {
         public int Id { get; set; }
+        public List<int> TwrGidNumer { get; set; }
         public List<string> KodSystem { get; set; }
         public string KodDostawcy { get; set; }
         public string KodOem { get; set; }
@@ -21,6 +22,7 @@ namespace ZaczytywanieKodow.Models
         {
             KodSystem = new List<string>();
             Dostawca = new List<string>();
+            TwrGidNumer = new List<int>();
         }
     }
 }
