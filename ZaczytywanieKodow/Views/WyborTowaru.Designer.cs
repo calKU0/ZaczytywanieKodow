@@ -32,9 +32,10 @@ namespace ZaczytywanieKodow
         private void InitializeComponent()
         {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.twrGidNumer = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.kodSystem = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dostawca = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -44,6 +45,7 @@ namespace ZaczytywanieKodow
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.twrGidNumer,
             this.kodSystem,
             this.dostawca});
             this.dataGridView1.Location = new System.Drawing.Point(10, 70);
@@ -52,6 +54,25 @@ namespace ZaczytywanieKodow
             this.dataGridView1.Size = new System.Drawing.Size(309, 309);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
+            // 
+            // textBox1
+            // 
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox1.Font = new System.Drawing.Font("Segoe UI", 25F);
+            this.textBox1.Location = new System.Drawing.Point(10, 12);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(311, 45);
+            this.textBox1.TabIndex = 1;
+            this.textBox1.Text = "Wybierz nasz kod XL";
+            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // twrGidNumer
+            // 
+            this.twrGidNumer.HeaderText = "twrgidnumer";
+            this.twrGidNumer.Name = "twrGidNumer";
+            this.twrGidNumer.ReadOnly = true;
+            this.twrGidNumer.Visible = false;
             // 
             // kodSystem
             // 
@@ -66,18 +87,6 @@ namespace ZaczytywanieKodow
             this.dostawca.HeaderText = "Dostawca";
             this.dostawca.Name = "dostawca";
             this.dostawca.ReadOnly = true;
-            // 
-            // textBox1
-            // 
-            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox1.Font = new System.Drawing.Font("Segoe UI", 25F);
-            this.textBox1.Location = new System.Drawing.Point(10, 12);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(311, 45);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "Wybierz nasz kod XL";
-            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // WyborTowaru
             // 
@@ -98,6 +107,7 @@ namespace ZaczytywanieKodow
 
         private DataGridView dataGridView1;
         private TextBox textBox1;
+        private DataGridViewTextBoxColumn twrGidNumer;
         private DataGridViewTextBoxColumn kodSystem;
         private DataGridViewTextBoxColumn dostawca;
     }

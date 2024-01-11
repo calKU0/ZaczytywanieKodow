@@ -32,10 +32,9 @@ namespace ZaczytywanieKodow
         private void InitializeComponent()
         { 
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ListaKodow));
-            this.WybierzPlikButton = new System.Windows.Forms.Button();
             this.nazwaPlikuTextBox = new System.Windows.Forms.TextBox();
-            this.ZaczytajButton = new System.Windows.Forms.Button();
             this.kodyLista = new System.Windows.Forms.DataGridView();
+            this.twrGidNumer = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.kodSystem = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.kodDostawcy = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.kodOem = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -48,40 +47,19 @@ namespace ZaczytywanieKodow
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.AnulujButton = new System.Windows.Forms.Button();
+            this.ZaczytajButton = new System.Windows.Forms.Button();
+            this.WybierzPlikButton = new System.Windows.Forms.Button();
+            this.WyczyscButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.kodyLista)).BeginInit();
             this.SuspendLayout();
-            // 
-            // WybierzPlikButton
-            // 
-            this.WybierzPlikButton.Location = new System.Drawing.Point(469, 13);
-            this.WybierzPlikButton.Name = "WybierzPlikButton";
-            this.WybierzPlikButton.Size = new System.Drawing.Size(144, 23);
-            this.WybierzPlikButton.TabIndex = 0;
-            this.WybierzPlikButton.Text = "Wybierz Plik";
-            this.WybierzPlikButton.UseVisualStyleBackColor = true;
-            this.WybierzPlikButton.Click += new System.EventHandler(this.WybierzPlikButton_Click);
             // 
             // nazwaPlikuTextBox
             // 
             this.nazwaPlikuTextBox.Location = new System.Drawing.Point(12, 13);
             this.nazwaPlikuTextBox.Name = "nazwaPlikuTextBox";
             this.nazwaPlikuTextBox.ReadOnly = true;
-            this.nazwaPlikuTextBox.Size = new System.Drawing.Size(439, 20);
+            this.nazwaPlikuTextBox.Size = new System.Drawing.Size(364, 20);
             this.nazwaPlikuTextBox.TabIndex = 1;
-            // 
-            // ZaczytajButton
-            // 
-            this.ZaczytajButton.BackColor = System.Drawing.SystemColors.Control;
-            this.ZaczytajButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.ZaczytajButton.Image = ((System.Drawing.Image)(resources.GetObject("ZaczytajButton.Image")));
-            this.ZaczytajButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ZaczytajButton.Location = new System.Drawing.Point(1466, 880);
-            this.ZaczytajButton.Name = "ZaczytajButton";
-            this.ZaczytajButton.Size = new System.Drawing.Size(186, 55);
-            this.ZaczytajButton.TabIndex = 2;
-            this.ZaczytajButton.Text = "Zaczytaj";
-            this.ZaczytajButton.UseVisualStyleBackColor = false;
-            this.ZaczytajButton.Click += new System.EventHandler(this.ZaczytajButton_Click);
             // 
             // kodyLista
             // 
@@ -90,11 +68,21 @@ namespace ZaczytywanieKodow
             this.kodyLista.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.kodyLista.Location = new System.Drawing.Point(12, 87);
             this.kodyLista.Name = "kodyLista";
+            this.kodyLista.ReadOnly = true;
             this.kodyLista.RowHeadersVisible = false;
             this.kodyLista.RowTemplate.Height = 25;
             this.kodyLista.Size = new System.Drawing.Size(1406, 848);
             this.kodyLista.TabIndex = 3;
             this.kodyLista.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.kodyLista_CellClick);
+            // 
+            // twrGidNumer
+            // 
+            this.twrGidNumer.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.twrGidNumer.HeaderText = "twrgidnumer";
+            this.twrGidNumer.Name = "twrGidNumer";
+            this.twrGidNumer.ReadOnly = true;
+            this.twrGidNumer.Visible = false;
+            this.twrGidNumer.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // kodSystem
             // 
@@ -102,6 +90,7 @@ namespace ZaczytywanieKodow
             this.kodSystem.HeaderText = "Kod Systemowy";
             this.kodSystem.Name = "kodSystem";
             this.kodSystem.ReadOnly = true;
+            //this.kodSystem.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // kodDostawcy
             // 
@@ -109,6 +98,7 @@ namespace ZaczytywanieKodow
             this.kodDostawcy.HeaderText = "Kod Dostawcy";
             this.kodDostawcy.Name = "kodDostawcy";
             this.kodDostawcy.ReadOnly = true;
+            this.kodDostawcy.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // kodOem
             // 
@@ -116,6 +106,7 @@ namespace ZaczytywanieKodow
             this.kodOem.HeaderText = "OEM";
             this.kodOem.Name = "kodOem";
             this.kodOem.ReadOnly = true;
+            this.kodOem.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // dostawca
             // 
@@ -123,24 +114,27 @@ namespace ZaczytywanieKodow
             this.dostawca.HeaderText = "Dostawca";
             this.dostawca.Name = "dostawca";
             this.dostawca.ReadOnly = true;
-            // 
-            // wyszukiwania
-            // 
-            this.wyszukiwania.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.wyszukiwania.HeaderText = "Wyszukiwania";
-            this.wyszukiwania.Name = "wyszukiwania";
-            this.wyszukiwania.ReadOnly = true;
+            this.dostawca.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // polaczoneNumery
             // 
             this.polaczoneNumery.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.polaczoneNumery.HeaderText = "Połączone Numery";
+            this.polaczoneNumery.HeaderText = "Połączone Numery OEM";
             this.polaczoneNumery.Name = "polaczoneNumery";
             this.polaczoneNumery.ReadOnly = true;
+            this.polaczoneNumery.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // wyszukiwania
+            // 
+            this.wyszukiwania.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.wyszukiwania.HeaderText = "Wyszukiwania";
+            this.wyszukiwania.Name = "wyszukiwania";
+            this.wyszukiwania.ReadOnly = true;
+            this.wyszukiwania.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // szczegoly
             // 
-            this.szczegoly.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.szczegoly.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.szczegoly.HeaderText = "Szczegóły";
             this.szczegoly.Name = "szczegoly";
             this.szczegoly.ReadOnly = true;
@@ -198,13 +192,55 @@ namespace ZaczytywanieKodow
             this.AnulujButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.AnulujButton.Image = global::ZaczytywanieKodow.Properties.Resources.cancel;
             this.AnulujButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.AnulujButton.Location = new System.Drawing.Point(1466, 819);
+            this.AnulujButton.Location = new System.Drawing.Point(1466, 738);
             this.AnulujButton.Name = "AnulujButton";
             this.AnulujButton.Size = new System.Drawing.Size(186, 55);
             this.AnulujButton.TabIndex = 2;
             this.AnulujButton.Text = "Anuluj";
             this.AnulujButton.UseVisualStyleBackColor = false;
             this.AnulujButton.Click += new System.EventHandler(this.AnulujButton_Click);
+            // 
+            // ZaczytajButton
+            // 
+            this.ZaczytajButton.BackColor = System.Drawing.SystemColors.Control;
+            this.ZaczytajButton.Enabled = false;
+            this.ZaczytajButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.ZaczytajButton.Image = ((System.Drawing.Image)(resources.GetObject("ZaczytajButton.Image")));
+            this.ZaczytajButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ZaczytajButton.Location = new System.Drawing.Point(1466, 880);
+            this.ZaczytajButton.Name = "ZaczytajButton";
+            this.ZaczytajButton.Size = new System.Drawing.Size(186, 55);
+            this.ZaczytajButton.TabIndex = 2;
+            this.ZaczytajButton.Text = "Zaczytaj";
+            this.ZaczytajButton.UseVisualStyleBackColor = false;
+            this.ZaczytajButton.Click += new System.EventHandler(this.ZaczytajButton_Click);
+            // 
+            // WybierzPlikButton
+            // 
+            this.WybierzPlikButton.Image = ((System.Drawing.Image)(resources.GetObject("WybierzPlikButton.Image")));
+            this.WybierzPlikButton.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
+            this.WybierzPlikButton.Location = new System.Drawing.Point(11, 39);
+            this.WybierzPlikButton.Name = "WybierzPlikButton";
+            this.WybierzPlikButton.Size = new System.Drawing.Size(151, 39);
+            this.WybierzPlikButton.TabIndex = 0;
+            this.WybierzPlikButton.Text = "Wybierz Plik";
+            this.WybierzPlikButton.UseVisualStyleBackColor = true;
+            this.WybierzPlikButton.Click += new System.EventHandler(this.WybierzPlikButton_Click);
+            // 
+            // WyczyscButton
+            // 
+            this.WyczyscButton.BackColor = System.Drawing.SystemColors.Control;
+            this.WyczyscButton.Enabled = false;
+            this.WyczyscButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.WyczyscButton.Image = global::ZaczytywanieKodow.Properties.Resources.trash_bin;
+            this.WyczyscButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.WyczyscButton.Location = new System.Drawing.Point(1466, 810);
+            this.WyczyscButton.Name = "WyczyscButton";
+            this.WyczyscButton.Size = new System.Drawing.Size(186, 55);
+            this.WyczyscButton.TabIndex = 2;
+            this.WyczyscButton.Text = "Wyczyść";
+            this.WyczyscButton.UseVisualStyleBackColor = false;
+            this.WyczyscButton.Click += new System.EventHandler(this.WyczyscButton_Click);
             // 
             // ListaKodow
             // 
@@ -218,6 +254,7 @@ namespace ZaczytywanieKodow
             this.Controls.Add(this.smoothProgressBar1);
             this.Controls.Add(this.kodyLista);
             this.Controls.Add(this.AnulujButton);
+            this.Controls.Add(this.WyczyscButton);
             this.Controls.Add(this.ZaczytajButton);
             this.Controls.Add(this.nazwaPlikuTextBox);
             this.Controls.Add(this.WybierzPlikButton);
@@ -237,6 +274,7 @@ namespace ZaczytywanieKodow
         private TextBox nazwaPlikuTextBox;
         private Button ZaczytajButton;
         private DataGridView kodyLista;
+        private DataGridViewTextBoxColumn twrGidNumer;
         private DataGridViewTextBoxColumn kodSystem;
         private DataGridViewTextBoxColumn kodDostawcy;
         private DataGridViewTextBoxColumn kodOem;
@@ -249,5 +287,6 @@ namespace ZaczytywanieKodow
         private TextBox textBox2;
         private TextBox textBox3;
         private Button AnulujButton;
+        private Button WyczyscButton;
     }
 }
