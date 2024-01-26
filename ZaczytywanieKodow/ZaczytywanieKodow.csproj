@@ -183,6 +183,12 @@
     <Compile Include="Services\Excel.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Services\Prompt.cs" />
+    <Compile Include="Views\Szczegoly.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Szczegoly.Designer.cs">
+      <DependentUpon>Szczegoly.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\ListaKodow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -200,6 +206,9 @@
     <EmbeddedResource Include="Views\ListaKodow.resx">
       <DependentUpon>ListaKodow.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\Szczegoly.resx">
+      <DependentUpon>Szczegoly.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\WyborTowaru.resx">
       <DependentUpon>WyborTowaru.cs</DependentUpon>
     </EmbeddedResource>
@@ -211,6 +220,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -232,7 +242,18 @@
       <Name>SmoothProgressBar</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\upload-file %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cancel %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\open-folder %284%29 %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\trash-bin %281%29.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets" Condition="Exists('..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
