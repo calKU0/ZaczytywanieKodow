@@ -63,6 +63,8 @@ namespace ZaczytywanieKodow
             // 
             // kodyLista
             // 
+            this.kodyLista.AllowUserToResizeColumns = false;
+            this.kodyLista.AllowUserToResizeRows = false;
             this.kodyLista.AllowUserToAddRows = false;
             this.kodyLista.AllowUserToDeleteRows = false;
             this.kodyLista.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -90,7 +92,7 @@ namespace ZaczytywanieKodow
             this.kodSystem.HeaderText = "Kod Systemowy";
             this.kodSystem.Name = "kodSystem";
             this.kodSystem.ReadOnly = true;
-            //this.kodSystem.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.kodSystem.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // kodDostawcy
             // 

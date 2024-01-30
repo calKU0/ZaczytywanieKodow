@@ -33,5 +33,18 @@ namespace ZaczytywanieKodow
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
+        private void wybierzButton_Click(object sender, EventArgs e)
+        {
+            ReturnValue1 = dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells["kodSystem"].Value.ToString();
+            ReturnValue2 = dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells["dostawca"].Value.ToString();
+            ReturnValue3 = dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells["twrGidNumer"].Value.ToString();
+
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+        }
+        private void dgv_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            e.PaintParts &= ~DataGridViewPaintParts.Focus;
+        }
     }
 }

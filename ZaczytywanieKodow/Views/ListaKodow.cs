@@ -83,7 +83,7 @@ namespace ZaczytywanieKodow
                         sw = Stopwatch.StartNew();
 
                         Item item = plik.CzytajWiersz(i);
-                        if (item.KodOem == "" || stop) { iloscWierszy = i - 2; return; }
+                        if (item.KodOem == "" || stop) { iloscWierszy = i -2; plik.Zamknij(); return; }
                         item.Id = i - 2;
                         items.Add(item);
 
@@ -109,8 +109,9 @@ namespace ZaczytywanieKodow
                         }));
                     }
                 });
+                plik.Zamknij();
             }
-            catch (Exception ex) { MessageBox.Show($"Napotkano b³¹d przy próbie zaczytania pliku Excel\n{ex}", "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+            catch (Exception ex) { plik.Zamknij(); MessageBox.Show($"Napotkano b³¹d przy próbie zaczytania pliku Excel\n{ex}", "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error); }
 
             try
             {
@@ -136,15 +137,14 @@ namespace ZaczytywanieKodow
 
                 foreach (var item in items)
                 {
-                    int previousRowIndex = kodyLista.RowCount;
                     if (!item.WieleKodow)
                     {
                         kodyLista.Rows.Add(item.TwrGidNumer[0], item.KodSystem[0], item.KodDostawcy, item.KodOem, item.Dostawca[0], item.PolaczoneKody, item.Wyszukiwania, "szczegó³y");
                     }
                     else
                     {
-                        kodyLista.Rows.Add(0, "Wybierz", item.KodDostawcy, item.KodOem, "", item.PolaczoneKody, item.Wyszukiwania, "szczegó³y");
-                        kodyLista.Rows[previousRowIndex].Cells["kodSystem"].Style.BackColor = System.Drawing.Color.Red;
+                        int index = kodyLista.Rows.Add(0, "Wybierz", item.KodDostawcy, item.KodOem, "", item.PolaczoneKody, item.Wyszukiwania, "szczegó³y");
+                        kodyLista.Rows[index].Cells["kodSystem"].Style.BackColor = System.Drawing.Color.Red;
                     }
                 }
 
@@ -200,17 +200,14 @@ namespace ZaczytywanieKodow
                 {
                     if ((string)kodyLista.Rows[e.RowIndex].Cells["kodSystem"].Value != "" && (string)kodyLista.Rows[e.RowIndex].Cells["kodSystem"].Value != "Wybierz")
                     {
-                        using (var forma = new Szczegoly((int)kodyLista.Rows[e.RowIndex].Cells["twrGidNumer"].Value))
+                        using (var forma = new Szczegoly(Convert.ToInt32(kodyLista.Rows[e.RowIndex].Cells["twrGidNumer"].Value)))
                         {
                             forma.ShowDialog();
-                            //TO DO
-                            //B³¹d przy otwieraniu szczegó³ów
-                            //Zobaczyæ czy sortowanie dzia³a
                         }
                     }
                     else
                     {
-                        MessageBox.Show("Brak kodu w XL", "Informacja", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Brak kodu w XL", "Informacja", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
             }
@@ -224,9 +221,9 @@ namespace ZaczytywanieKodow
             kodyLista.Rows.Clear();
             kodyLista.Refresh();
             AnulujButton.Enabled = false;
+            nazwaPlikuTextBox.Text = String.Empty;
             ZaczytajButton.Enabled = false;
             WyczyscButton.Enabled = false;
-            nazwaPlikuTextBox.Text = string.Empty;
             this.smoothProgressBar1.Visible = false;
             this.textBox1.Visible = false;
             this.textBox2.Visible = false;
