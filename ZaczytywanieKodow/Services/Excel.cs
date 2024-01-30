@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using IronXL;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.IO;
 using ZaczytywanieKodow.Models;
 using System.Windows.Forms;
 using System.Data;
-using System.Collections;
+using excel = Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
 
 namespace ZaczytywanieKodow
 {
@@ -16,10 +15,12 @@ namespace ZaczytywanieKodow
     {
         public int IloscWierszy { get; set; }
         private string nazwaPliku { get; set; }
-        private bool czyPlikOtwarty { get; set; } = false;
-        private WorkBook plikExcel { get; set; }
-        private WorkSheet arkusz { get; set; }
-        private SqlConnection connection { get; set; }
+        public bool czyPlikOtwarty { get; set; } = false;
+        private excel.Workbook plikExcel { get; set; }
+        private excel.Worksheet arkusz { get; set; }
+        private excel.Application xlApp { get; set; }
+        private excel.Range range { get; set; }
+
         private readonly string connectionString = ConfigurationManager.ConnectionStrings["GaskaConnectionString"].ConnectionString;
 
         public Excel(string nazwaPliku)
@@ -31,8 +32,10 @@ namespace ZaczytywanieKodow
         {
             try
             {
-                plikExcel = WorkBook.Load(nazwaPliku);
-                arkusz = plikExcel.WorkSheets.First();
+                xlApp = new excel.Application();
+                plikExcel = xlApp.Workbooks.Open(nazwaPliku, 0, true, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+                arkusz = (excel.Worksheet)plikExcel.Worksheets.get_Item(1);
+                range = arkusz.UsedRange;
                 czyPlikOtwarty = true;
             }
             catch (FileNotFoundException) { MessageBox.Show("Nie znaleziono pliku", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error); }
@@ -41,8 +44,22 @@ namespace ZaczytywanieKodow
 
         public int PobierzIloscWierszy()
         {
-            if (czyPlikOtwarty == true) { return arkusz.Rows.Count(); }
+            if (czyPlikOtwarty == true) { return arkusz.UsedRange.Rows.Count; }
             else { MessageBox.Show("Nie otwarto pliku", "Ostrzeżenie", MessageBoxButtons.OK, MessageBoxIcon.Warning); return 0; }
+        }
+
+        public void Zamknij()
+        {
+            if (czyPlikOtwarty == true)
+            {
+                plikExcel.Close(true, null, null);
+                xlApp.Quit();
+
+                Marshal.ReleaseComObject(arkusz);
+                Marshal.ReleaseComObject(plikExcel);
+                Marshal.ReleaseComObject(xlApp);
+                czyPlikOtwarty = false;
+            }
         }
 
         public Item CzytajWiersz(int numerWiersza)
@@ -52,15 +69,34 @@ namespace ZaczytywanieKodow
             {
                 if (czyPlikOtwarty == true)
                 {
-                    item.KodDostawcy = arkusz["B" + numerWiersza.ToString()].StringValue == null ? "" : arkusz["B" + numerWiersza.ToString()].StringValue.Replace(System.Environment.NewLine, "");
-                    item.KodOem = arkusz["C" + numerWiersza.ToString()].StringValue == null ? "" : arkusz["C" + numerWiersza.ToString()].StringValue.Replace(System.Environment.NewLine, "");
+                    item.KodDostawcy = ((excel.Range)range.Cells[numerWiersza, 2]).FormulaR1C1Local.ToString() == null ? "" : ((excel.Range)range.Cells[numerWiersza, 2]).FormulaR1C1Local.ToString().Replace(System.Environment.NewLine, "");
+                    item.KodOem = ((excel.Range)range.Cells[numerWiersza, 3]).FormulaR1C1Local.ToString() == null ? "" : ((excel.Range)range.Cells[numerWiersza, 3]).FormulaR1C1Local.ToString().Replace(System.Environment.NewLine, "");
 
-                    string query = @"SELECT isnull(twr_gidnumer,0) as twrGidNumer,isnull(twr_kod,'') as twrKod, isnull(knt_akronim,'') as kntAkronim, podzapytanie.wyszukiwania as wyszukiwania
-                                    from (SELECT count(R_twr_twrid) as wyszukiwania FROM [serwer-sql].[nowe_b2b].[ldd].[RptTowary] with (nolock) where r_twr_Zapytanie = @kodOem) podzapytanie
-									left join cdn.twrAplikacjeOpisy with (nolock) on TPO_OpisKrotki like '%" + item.KodOem + @"%' 
-                                    left join cdn.twrkarty with (nolock) on Twr_GIDTyp=TPO_ObiTyp AND Twr_GIDNumer=TPO_ObiNumer and Twr_Archiwalny = 0
-                                    left join cdn.twrdost with (nolock) on Twr_GIDNumer=TWD_TwrNumer and TWD_KlasaKnt = 8
-                                    left join cdn.kntkarty with (nolock) on knt_gidnumer = twd_kntnumer";
+                    string query = @"IF NOT EXISTS (SELECT TKO_GIDNumer FROM dbo.TwrKodyOem where TKO_Oem = '" + item.KodOem + @"')
+                                    BEGIN
+	                                    SELECT distinct isnull(twr_gidnumer,0) as twrGidNumer
+	                                    ,isnull(twr_kod,'') as twrKod
+	                                    ,isnull(knt_akronim,'') as kntAkronim
+	                                    ,podzapytanie.wyszukiwania as wyszukiwania
+	                                    from (SELECT count(R_twr_twrid) as wyszukiwania FROM [serwer-sql].[nowe_b2b].[ldd].[RptTowary] with (nolock) where r_twr_Zapytanie = '" + item.KodOem + @"') podzapytanie
+
+	                                    left join cdn.twrAplikacjeOpisy with (nolock) on TPO_OpisKrotki like '%" + item.KodOem + @"%'
+	                                    left join cdn.twrkarty with (nolock) on Twr_GIDTyp=TPO_ObiTyp AND Twr_GIDNumer=TPO_ObiNumer and Twr_Archiwalny = 0
+	                                    left join cdn.twrdost with (nolock) on Twr_GIDNumer=TWD_TwrNumer and TWD_KlasaKnt = 8
+	                                    left join cdn.kntkarty with (nolock) on knt_gidnumer = twd_kntnumer
+                                    END
+                                    ELSE
+                                    BEGIN
+	                                    SELECT distinct isnull(twr_gidnumer,0) as twrGidNumer
+	                                    ,isnull(twr_kod,'') as twrKod
+	                                    ,isnull(knt_akronim,'') as kntAkronim
+	                                    ,podzapytanie.wyszukiwania as wyszukiwania
+	                                    from (SELECT count(R_twr_twrid) as wyszukiwania FROM [serwer-sql].[nowe_b2b].[ldd].[RptTowary] with (nolock) where r_twr_Zapytanie = '" + item.KodOem + @"') podzapytanie
+	                                    join dbo.TwrKodyOem with (nolock) on TKO_Oem = '" + item.KodOem + @"'
+	                                    join cdn.twrkarty with (nolock) on Twr_GIDTyp=16 AND Twr_GIDNumer=TKO_TwrNumer and Twr_Archiwalny = 0
+	                                    left join cdn.twrdost with (nolock) on Twr_GIDNumer=TWD_TwrNumer and TWD_KlasaKnt = 8
+	                                    join cdn.kntkarty with (nolock) on knt_gidnumer = twd_kntnumer
+                                    END";
 
                     string queryRowCount = "SELECT @@ROWCOUNT";
 
@@ -100,7 +136,7 @@ namespace ZaczytywanieKodow
             try
             {
                 string select = @"SELECT
-	                        ,TWr_kod as [Kod towaru]
+	                        TWr_kod as [Kod towaru]
                             ,Twr_nazwa as [Nazwa towaru]
                             ,R_TWR_Zapytanie as [Szukany ciąg]
                             ,KNT_Akronim as [Klient]
