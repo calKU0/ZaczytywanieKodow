@@ -63,17 +63,20 @@ namespace ZaczytywanieKodow
             // 
             // kodyLista
             // 
-            this.kodyLista.AllowUserToResizeColumns = false;
-            this.kodyLista.AllowUserToResizeRows = false;
             this.kodyLista.AllowUserToAddRows = false;
             this.kodyLista.AllowUserToDeleteRows = false;
+            this.kodyLista.AllowUserToResizeColumns = false;
+            this.kodyLista.AllowUserToResizeRows = false;
+            this.kodyLista.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.kodyLista.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.kodyLista.Location = new System.Drawing.Point(12, 87);
             this.kodyLista.Name = "kodyLista";
             this.kodyLista.ReadOnly = true;
             this.kodyLista.RowHeadersVisible = false;
             this.kodyLista.RowTemplate.Height = 25;
-            this.kodyLista.Size = new System.Drawing.Size(1406, 848);
+            this.kodyLista.Size = new System.Drawing.Size(1423, 848);
             this.kodyLista.TabIndex = 3;
             this.kodyLista.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.kodyLista_CellClick);
             // 
@@ -83,8 +86,8 @@ namespace ZaczytywanieKodow
             this.twrGidNumer.HeaderText = "twrgidnumer";
             this.twrGidNumer.Name = "twrGidNumer";
             this.twrGidNumer.ReadOnly = true;
-            this.twrGidNumer.Visible = false;
             this.twrGidNumer.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.twrGidNumer.Visible = false;
             // 
             // kodSystem
             // 
@@ -118,14 +121,6 @@ namespace ZaczytywanieKodow
             this.dostawca.ReadOnly = true;
             this.dostawca.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
-            // polaczoneNumery
-            // 
-            this.polaczoneNumery.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.polaczoneNumery.HeaderText = "Połączone Numery OEM";
-            this.polaczoneNumery.Name = "polaczoneNumery";
-            this.polaczoneNumery.ReadOnly = true;
-            this.polaczoneNumery.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
             // wyszukiwania
             // 
             this.wyszukiwania.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
@@ -133,6 +128,14 @@ namespace ZaczytywanieKodow
             this.wyszukiwania.Name = "wyszukiwania";
             this.wyszukiwania.ReadOnly = true;
             this.wyszukiwania.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // polaczoneNumery
+            // 
+            this.polaczoneNumery.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.polaczoneNumery.HeaderText = "Połączone Numery OEM";
+            this.polaczoneNumery.Name = "polaczoneNumery";
+            this.polaczoneNumery.ReadOnly = true;
+            this.polaczoneNumery.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // szczegoly
             // 
@@ -189,6 +192,7 @@ namespace ZaczytywanieKodow
             // 
             // AnulujButton
             // 
+            this.AnulujButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.AnulujButton.BackColor = System.Drawing.SystemColors.Control;
             this.AnulujButton.Enabled = false;
             this.AnulujButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
@@ -204,6 +208,7 @@ namespace ZaczytywanieKodow
             // 
             // ZaczytajButton
             // 
+            this.ZaczytajButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ZaczytajButton.BackColor = System.Drawing.SystemColors.Control;
             this.ZaczytajButton.Enabled = false;
             this.ZaczytajButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
@@ -231,6 +236,7 @@ namespace ZaczytywanieKodow
             // 
             // WyczyscButton
             // 
+            this.WyczyscButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.WyczyscButton.BackColor = System.Drawing.SystemColors.Control;
             this.WyczyscButton.Enabled = false;
             this.WyczyscButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
