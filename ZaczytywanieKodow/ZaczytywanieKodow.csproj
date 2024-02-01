@@ -78,6 +78,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\GrouppedItem.cs" />
     <Compile Include="Services\Excel.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Services\Prompt.cs" />

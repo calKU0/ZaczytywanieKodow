@@ -16,7 +16,7 @@ namespace ZaczytywanieKodow
         public string ReturnValue1 { get; set; }
         public string ReturnValue2 { get; set; }
         public string ReturnValue3 { get; set; }
-        public WyborTowaru(Item item)
+        public WyborTowaru(GrouppedItem item)
         {
             InitializeComponent();
             for (int i = 0; i < item.KodSystem.Count && i < item.Dostawca.Count; i++)

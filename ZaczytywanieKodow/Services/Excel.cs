@@ -117,10 +117,9 @@ namespace ZaczytywanieKodow
                                     item.KodSystem.Add((string)dr["twrKod"]);
                                     item.Dostawca.Add((string)dr["kntAkronim"]);
                                     item.Wyszukiwania = (int)dr["wyszukiwania"];
-                                    if (IloscWierszy > 1) { item.WieleKodow = true; }
                                 }
                             }
-                            else { item.KodSystem.Add(""); item.WieleKodow = false; }
+                            else { item.KodSystem.Add(""); }
                         }
                     }
                 }

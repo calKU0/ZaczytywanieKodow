@@ -14,11 +14,12 @@ namespace ZaczytywanieKodow
     public partial class ListaKodow : Form
     {
         private List<Item> items { get; set; } = new List<Item>();
+        private List<GrouppedItem> grouppedItems { get; set; } = new List<GrouppedItem>();
         private bool stop;
         public ListaKodow()
         {
             InitializeComponent();
-            kodyLista.Columns.AddRange(new DataGridViewColumn[] { twrGidNumer,kodSystem, kodDostawcy, kodOem, dostawca, polaczoneNumery, wyszukiwania, szczegoly });
+            kodyLista.Columns.AddRange(new DataGridViewColumn[] { twrGidNumer,kodSystem, kodDostawcy, dostawca, polaczoneNumery, wyszukiwania, szczegoly });
         }
 
         private void WybierzPlikButton_Click(object sender, EventArgs e)
@@ -83,8 +84,7 @@ namespace ZaczytywanieKodow
                         sw = Stopwatch.StartNew();
 
                         Item item = plik.CzytajWiersz(i);
-                        if (item.KodOem == "" || stop) { iloscWierszy = i -2; plik.Zamknij(); return; }
-                        item.Id = i - 2;
+                        if (item.KodDostawcy == "" || stop) { iloscWierszy = i -2; plik.Zamknij(); return; }
                         items.Add(item);
 
                         this.smoothProgressBar1.Value++;
@@ -135,15 +135,63 @@ namespace ZaczytywanieKodow
                     }
                 }
 
+                HashSet<string> uniqueKodDostawcy = new HashSet<string>();
+                int index = 1;
+
                 foreach (var item in items)
                 {
-                    if (!item.WieleKodow)
+                    if (!uniqueKodDostawcy.Contains(item.KodDostawcy))
                     {
-                        kodyLista.Rows.Add(item.TwrGidNumer[0], item.KodSystem[0], item.KodDostawcy, item.KodOem, item.Dostawca[0], item.PolaczoneKody, item.Wyszukiwania, "szczegó³y");
+                        GrouppedItem grouppedItem = new GrouppedItem();
+                        grouppedItem.Id = index;
+                        grouppedItem.KodDostawcy = item.KodDostawcy;
+                        grouppedItem.PolaczoneKody = item.PolaczoneKody;
+                        grouppedItem.KodSystem = items
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody)
+                                     .SelectMany(i => i.KodSystem)
+                                     .ToList();
+                        grouppedItem.TwrGidNumer = items
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody)
+                                     .SelectMany(i => i.TwrGidNumer)
+                                     .ToList();
+                        grouppedItem.Dostawca= items
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody)
+                                     .SelectMany(i => i.Dostawca)
+                                     .ToList();
+                        grouppedItem.Wyszukiwania = items
+                                    .Where(i => i.PolaczoneKody == item.PolaczoneKody)
+                                    .Sum(i => i.Wyszukiwania);
+
+                        
+
+                        if (grouppedItem.TwrGidNumer.Count > 1)
+                        {
+                            grouppedItem.WieleKodow = true;
+                        }
+                        else
+                        {
+                            grouppedItem.WieleKodow = false;
+                        }
+
+                        grouppedItems.Add(grouppedItem);
+
+                        index += 1;
+                        uniqueKodDostawcy.Add(item.KodDostawcy);
+                    }
+                }
+                foreach( var grouppedItem in grouppedItems )
+                {
+                    if (!grouppedItem.WieleKodow)
+                    {
+                        kodyLista.Rows.Add(grouppedItem.TwrGidNumer[0], grouppedItem.KodSystem[0], grouppedItem.KodDostawcy, grouppedItem.Dostawca[0], grouppedItem.PolaczoneKody, grouppedItem.Wyszukiwania, "szczegó³y");
                     }
                     else
                     {
-                        int index = kodyLista.Rows.Add(0, "Wybierz", item.KodDostawcy, item.KodOem, "", item.PolaczoneKody, item.Wyszukiwania, "szczegó³y");
+                        /*foreach(var kod in grouppedItem.KodSystem)
+                        {
+                            MessageBox.Show(kod);
+                        }*/
+                        index = kodyLista.Rows.Add(0, "Wybierz", grouppedItem.KodDostawcy, "", grouppedItem.PolaczoneKody, grouppedItem.Wyszukiwania, "szczegó³y");
                         kodyLista.Rows[index].Cells["kodSystem"].Style.BackColor = System.Drawing.Color.Red;
                     }
                 }
@@ -171,9 +219,10 @@ namespace ZaczytywanieKodow
         {
             try
             {
-                if (e.ColumnIndex == kodyLista.Columns["kodSystem"].Index && e.RowIndex >= 0 && items.ElementAt(e.RowIndex).WieleKodow == true)
+                if (e.ColumnIndex == kodyLista.Columns["kodSystem"].Index && e.RowIndex >= 0 && items.ElementAt(e.RowIndex).TwrGidNumer.Count > 1)
                 {
-                    var item = items.Where((Item arg) => arg.Id == e.RowIndex).FirstOrDefault();
+                    var item = grouppedItems.Where((GrouppedItem arg) => arg.Id == e.RowIndex).FirstOrDefault();
+
                     using (var forma = new WyborTowaru(item))
                     {
                         var result = forma.ShowDialog();
