@@ -69,54 +69,150 @@ namespace ZaczytywanieKodow
             {
                 if (czyPlikOtwarty == true)
                 {
-                    item.KodDostawcy = ((excel.Range)range.Cells[numerWiersza, 2]).FormulaR1C1Local.ToString() == null ? "" : ((excel.Range)range.Cells[numerWiersza, 2]).FormulaR1C1Local.ToString().Replace(System.Environment.NewLine, "");
-                    item.KodOem = ((excel.Range)range.Cells[numerWiersza, 3]).FormulaR1C1Local.ToString() == null ? "" : ((excel.Range)range.Cells[numerWiersza, 3]).FormulaR1C1Local.ToString().Replace(System.Environment.NewLine, "");
+                    item.KodDostawcy = ((excel.Range)range.Cells[numerWiersza, 2]).FormulaR1C1Local.ToString() ?? "";
+                    item.KodOem = ((excel.Range)range.Cells[numerWiersza, 3]).FormulaR1C1Local.ToString() ?? "";
+                    if (item.KodDostawcy == "") { return item; }
 
                     string query = @"IF NOT EXISTS (SELECT TKO_GIDNumer FROM dbo.TwrKodyOem where TKO_Oem = '" + item.KodOem + @"')
                                     BEGIN
 	                                    SELECT distinct isnull(twr_gidnumer,0) as twrGidNumer
 	                                    ,isnull(twr_kod,'') as twrKod
-	                                    ,isnull(knt_akronim,'') as kntAkronim
+                                        ,isnull(twr_nazwa,'') as twrNazwa
+	                                    ,isnull((select top 1 isnull(knt_akronim,'') from cdn.twrdost with (nolock) join cdn.kntkarty with (nolock) on knt_gidnumer = twd_kntnumer where Twr_GIDNumer=TWD_TwrNumer and TWD_KlasaKnt = 8),'') as kntAkronim
 	                                    ,podzapytanie.wyszukiwania as wyszukiwania
+                                        ,isnull((select top 1 zakupowe.Cena from(
+											select ImE_Cena as [Cena]
+											,ImN_GIDNumer as [DokumentGidNumer]
+											,ImE_TwrNumer as [TowarGidNumer]
+											,ImN_DataWystawienia as [DataWystawienia]
+											from cdn.impnag with (nolock)
+											join cdn.impelem with(nolock) on ImE_GIDNumer = ImN_GIDNumer
+											where ImN_GIDTyp=3344
+
+											union all
+
+											select TrE_Cena as [Cena]
+											,TrN_GIDNumer as [DokumentGidNumer]
+											,TrE_TwrNumer as [TowarGidNumer]
+											,TrN_Data2 as [DataWystawienia]
+											from cdn.TraNag with (nolock)
+											join cdn.TraElem with (nolock) on TrN_GIDTyp=TrE_GIDTyp AND TrN_GIDNumer=TrE_GIDNumer
+											where TrN_GIDTyp = 1521
+										) zakupowe
+										where zakupowe.TowarGidNumer = Twr_GIDNumer
+										order by zakupowe.DataWystawienia desc, zakupowe.DokumentGidNumer desc
+									),0) as [ostCena]
+	                                    ,isnull((
+		                                    select top 1 zakupowe.Waluta
+		                                    from
+		                                    (
+			                                    select ImE_Cena as [Cena]
+			                                    ,ImN_Waluta as [Waluta]
+			                                    ,ImN_GIDNumer as [DokumentGidNumer]
+			                                    ,ImE_TwrNumer as [TowarGidNumer]
+			                                    ,ImN_DataWystawienia as [DataWystawienia]
+			                                    from cdn.impnag with (nolock)
+			                                    join cdn.impelem with(nolock) on ImE_GIDNumer = ImN_GIDNumer
+			                                    where ImN_GIDTyp=3344
+
+			                                    union all
+
+			                                    select TrE_Cena as [Cena]
+			                                    ,tre_waluta as [Waluta]
+			                                    ,TrN_GIDNumer as [DokumentGidNumer]
+			                                    ,TrE_TwrNumer as [TowarGidNumer]
+			                                    ,TrN_Data2 as [DataWystawienia]
+			                                    from cdn.TraNag with (nolock)
+			                                    join cdn.TraElem with (nolock) on TrN_GIDTyp=TrE_GIDTyp AND TrN_GIDNumer=TrE_GIDNumer
+			                                    where TrN_GIDTyp = 1521
+		                                    ) zakupowe
+		                                    where zakupowe.TowarGidNumer = Twr_GIDNumer
+		                                    order by zakupowe.DataWystawienia desc, zakupowe.DokumentGidNumer desc
+	                                    ),'') as waluta
 	                                    from (SELECT count(R_twr_twrid) as wyszukiwania FROM [serwer-sql].[nowe_b2b].[ldd].[RptTowary] with (nolock) where r_twr_Zapytanie = '" + item.KodOem + @"') podzapytanie
 
 	                                    left join cdn.twrAplikacjeOpisy with (nolock) on TPO_OpisKrotki like '%" + item.KodOem + @"%'
 	                                    left join cdn.twrkarty with (nolock) on Twr_GIDTyp=TPO_ObiTyp AND Twr_GIDNumer=TPO_ObiNumer and Twr_Archiwalny = 0
-	                                    left join cdn.twrdost with (nolock) on Twr_GIDNumer=TWD_TwrNumer and TWD_KlasaKnt = 8
-	                                    left join cdn.kntkarty with (nolock) on knt_gidnumer = twd_kntnumer
                                     END
                                     ELSE
                                     BEGIN
 	                                    SELECT distinct isnull(twr_gidnumer,0) as twrGidNumer
 	                                    ,isnull(twr_kod,'') as twrKod
-	                                    ,isnull(knt_akronim,'') as kntAkronim
+                                        ,isnull(twr_nazwa,'') as twrNazwa
+	                                    ,isnull((select top 1 knt_akronim from cdn.twrdost with (nolock) join cdn.kntkarty with (nolock) on knt_gidnumer = twd_kntnumer where Twr_GIDNumer=TWD_TwrNumer and TWD_KlasaKnt = 8),'') as kntAkronim
 	                                    ,podzapytanie.wyszukiwania as wyszukiwania
+                                        ,isnull((select top 1 zakupowe.Cena from(
+											select ImE_Cena as [Cena]
+											,ImN_GIDNumer as [DokumentGidNumer]
+											,ImE_TwrNumer as [TowarGidNumer]
+											,ImN_DataWystawienia as [DataWystawienia]
+											from cdn.impnag with (nolock)
+											join cdn.impelem with(nolock) on ImE_GIDNumer = ImN_GIDNumer
+											where ImN_GIDTyp=3344
+
+											union all
+
+											select TrE_Cena as [Cena]
+											,TrN_GIDNumer as [DokumentGidNumer]
+											,TrE_TwrNumer as [TowarGidNumer]
+											,TrN_Data2 as [DataWystawienia]
+											from cdn.TraNag with (nolock)
+											join cdn.TraElem with (nolock) on TrN_GIDTyp=TrE_GIDTyp AND TrN_GIDNumer=TrE_GIDNumer
+											where TrN_GIDTyp = 1521
+										) zakupowe
+										where zakupowe.TowarGidNumer = Twr_GIDNumer
+										order by zakupowe.DataWystawienia desc, zakupowe.DokumentGidNumer desc
+									),0) as [ostCena]
+	                                    ,isnull((
+		                                    select top 1 zakupowe.Waluta
+		                                    from
+		                                    (
+			                                    select ImE_Cena as [Cena]
+			                                    ,ImN_Waluta as [Waluta]
+			                                    ,ImN_GIDNumer as [DokumentGidNumer]
+			                                    ,ImE_TwrNumer as [TowarGidNumer]
+			                                    ,ImN_DataWystawienia as [DataWystawienia]
+			                                    from cdn.impnag with (nolock)
+			                                    join cdn.impelem with(nolock) on ImE_GIDNumer = ImN_GIDNumer
+			                                    where ImN_GIDTyp=3344
+
+			                                    union all
+
+			                                    select TrE_Cena as [Cena]
+			                                    ,tre_waluta as [Waluta]
+			                                    ,TrN_GIDNumer as [DokumentGidNumer]
+			                                    ,TrE_TwrNumer as [TowarGidNumer]
+			                                    ,TrN_Data2 as [DataWystawienia]
+			                                    from cdn.TraNag with (nolock)
+			                                    join cdn.TraElem with (nolock) on TrN_GIDTyp=TrE_GIDTyp AND TrN_GIDNumer=TrE_GIDNumer
+			                                    where TrN_GIDTyp = 1521
+		                                    ) zakupowe
+		                                    where zakupowe.TowarGidNumer = Twr_GIDNumer
+		                                    order by zakupowe.DataWystawienia desc, zakupowe.DokumentGidNumer desc
+	                                    ),'') as waluta
 	                                    from (SELECT count(R_twr_twrid) as wyszukiwania FROM [serwer-sql].[nowe_b2b].[ldd].[RptTowary] with (nolock) where r_twr_Zapytanie = '" + item.KodOem + @"') podzapytanie
 	                                    join dbo.TwrKodyOem with (nolock) on TKO_Oem = '" + item.KodOem + @"'
 	                                    join cdn.twrkarty with (nolock) on Twr_GIDTyp=16 AND Twr_GIDNumer=TKO_TwrNumer and Twr_Archiwalny = 0
-	                                    left join cdn.twrdost with (nolock) on Twr_GIDNumer=TWD_TwrNumer and TWD_KlasaKnt = 8
-	                                    join cdn.kntkarty with (nolock) on knt_gidnumer = twd_kntnumer
                                     END";
-
-                    string queryRowCount = "SELECT @@ROWCOUNT";
 
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
                         SqlCommand selectCommand = new SqlCommand(query, connection);
-                        SqlCommand selectRowCountCommand = new SqlCommand(queryRowCount, connection);
                         selectCommand.Parameters.AddWithValue("@kodOem", item.KodOem);
                         using (SqlDataReader dr = selectCommand.ExecuteReader())
                         {
-                            IloscWierszy = (int)selectRowCountCommand.ExecuteScalar();
                             if (dr.HasRows)
                             {
                                 while (dr.Read())
                                 {
                                     item.TwrGidNumer.Add((int)dr["twrGidNumer"]);
                                     item.KodSystem.Add((string)dr["twrKod"]);
+                                    item.Nazwa.Add((string)dr["twrNazwa"]);
                                     item.Dostawca.Add((string)dr["kntAkronim"]);
                                     item.Wyszukiwania = (int)dr["wyszukiwania"];
+                                    item.OstatniaCenaZakupu.Add((decimal)dr["ostCena"]);
+                                    item.Waluta.Add((string)dr["waluta"]);
                                 }
                             }
                             else { item.KodSystem.Add(""); }

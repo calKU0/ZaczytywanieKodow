@@ -8,6 +8,8 @@ using System.Data;
 using System.Threading.Tasks;
 using ZaczytywanieKodow.Views;
 using System.Linq.Expressions;
+using System.Drawing;
+using System.Configuration;
 
 namespace ZaczytywanieKodow
 {
@@ -15,13 +17,65 @@ namespace ZaczytywanieKodow
     {
         private List<Item> items { get; set; } = new List<Item>();
         private List<GrouppedItem> grouppedItems { get; set; } = new List<GrouppedItem>();
+        private readonly int APIVersion = 20231;
         private bool stop;
+        private int IDSesjiXL = 0;
         public ListaKodow()
         {
             InitializeComponent();
-            kodyLista.Columns.AddRange(new DataGridViewColumn[] { twrGidNumer,kodSystem, kodDostawcy, dostawca, polaczoneNumery, wyszukiwania, szczegoly });
+            kodyLista.Columns.AddRange(new DataGridViewColumn[] { twrGidNumer, kodSystem, nazwa, kodDostawcy, dostawca, ostCenaZak, waluta, polaczoneNumery, wyszukiwania, szczegoly });
         }
 
+        public void ListaKodow_Load(object sender, EventArgs e)
+        {
+            try
+            {
+
+                cdn_api.XLLoginInfo_20231 xlLoginInfo = new cdn_api.XLLoginInfo_20231();
+                xlLoginInfo.ProgramID = "ZaczytywanieKodow";
+                xlLoginInfo.Winieta = -1;
+                xlLoginInfo.Wersja = APIVersion;
+                xlLoginInfo.OpeIdent = ConfigurationManager.AppSettings["XLLogin"];
+                xlLoginInfo.OpeHaslo = ConfigurationManager.AppSettings["XLHas³o"];
+                xlLoginInfo.Baza = ConfigurationManager.AppSettings["XLBaza"];
+                xlLoginInfo.TrybWsadowy = 1;
+                xlLoginInfo.TrybNaprawy = 0;
+
+                Int32 wynik = cdn_api.cdn_api.XLLogin(xlLoginInfo, ref IDSesjiXL); // zwraca numer sesji przydzielonej przez xl-a do uzywania dalej w programie (wartoœæ zwracana jest do globalnej zmiennej IDSesjiXL zadeklarowanej na pocz¹tku programu, poniewa¿ na t¹ zmienn¹ wskazuje referencja)
+
+                if (wynik != 0)
+                {
+                    MessageBox.Show("B³¹d logowania");
+                    Close();
+                }
+            }
+
+            catch (Exception ex)
+            {
+
+                MessageBox.Show("B³¹d logowania do XL-a, program koñczy swoje dzia³anie" + "\r" + ex.ToString());
+
+                Close();
+            }
+
+        }
+        private void ListaKodow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Wylogowanie(IDSesjiXL);
+        }
+        private void Wylogowanie(Int32 SessionID)
+        {
+            try
+            {
+                cdn_api.cdn_api.XLLogout(SessionID);
+
+            }
+
+            catch
+            {
+                MessageBox.Show("Nie uda³o siê wylogowaæ");
+            }
+        }
         private void WybierzPlikButton_Click(object sender, EventArgs e)
         {
             if (kodyLista.Rows.Count > 0)
@@ -67,7 +121,7 @@ namespace ZaczytywanieKodow
             this.smoothProgressBar1.Value = 0;
             this.smoothProgressBar1.Visible = true;
             this.smoothProgressBar1.Minimum = 0;
-            this.smoothProgressBar1.Maximum = iloscWierszy;
+            this.smoothProgressBar1.Maximum = iloscWierszy - 1;
 
             Stopwatch sw;
             long totalTime = 0;
@@ -84,7 +138,7 @@ namespace ZaczytywanieKodow
                         sw = Stopwatch.StartNew();
 
                         Item item = plik.CzytajWiersz(i);
-                        if (item.KodDostawcy == "" || stop) { iloscWierszy = i -2; plik.Zamknij(); return; }
+                        if (item.KodDostawcy == "" || stop) { iloscWierszy = i - 2; plik.Zamknij(); return; }
                         items.Add(item);
 
                         this.smoothProgressBar1.Value++;
@@ -136,7 +190,7 @@ namespace ZaczytywanieKodow
                 }
 
                 HashSet<string> uniqueKodDostawcy = new HashSet<string>();
-                int index = 1;
+                int index = 0;
 
                 foreach (var item in items)
                 {
@@ -147,26 +201,48 @@ namespace ZaczytywanieKodow
                         grouppedItem.KodDostawcy = item.KodDostawcy;
                         grouppedItem.PolaczoneKody = item.PolaczoneKody;
                         grouppedItem.KodSystem = items
-                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody)
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody && !item.TwrGidNumer.Any(x => x.Equals(0)))
                                      .SelectMany(i => i.KodSystem)
                                      .ToList();
+                        grouppedItem.Nazwa = items
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody && !item.TwrGidNumer.Any(x => x.Equals(0)))
+                                     .SelectMany(i => i.Nazwa)
+                                     .ToList();
                         grouppedItem.TwrGidNumer = items
-                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody)
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody && !item.TwrGidNumer.Any(x => x.Equals(0)))
                                      .SelectMany(i => i.TwrGidNumer)
                                      .ToList();
                         grouppedItem.Dostawca= items
-                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody)
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody && !item.TwrGidNumer.Any(x => x.Equals(0)))
                                      .SelectMany(i => i.Dostawca)
                                      .ToList();
+                        grouppedItem.OstatniaCenaZakupu = items
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody && !item.TwrGidNumer.Any(x => x.Equals(0)))
+                                     .SelectMany(i => i.OstatniaCenaZakupu)
+                                     .ToList();
+                        grouppedItem.Waluta = items
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody && !item.TwrGidNumer.Any(x => x.Equals(0)))
+                                     .SelectMany(i => i.Waluta)
+                                     .ToList();
                         grouppedItem.Wyszukiwania = items
-                                    .Where(i => i.PolaczoneKody == item.PolaczoneKody)
-                                    .Sum(i => i.Wyszukiwania);
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody && !item.TwrGidNumer.Any(x => x.Equals(0)))
+                                     .Sum(i => i.Wyszukiwania);
 
-                        
-
-                        if (grouppedItem.TwrGidNumer.Count > 1)
+                        if (grouppedItem.KodSystem.Count() == 0) { grouppedItem.KodSystem.Add(""); grouppedItem.Nazwa.Add(""); grouppedItem.TwrGidNumer.Add(0); grouppedItem.Dostawca.Add(""); grouppedItem.OstatniaCenaZakupu.Add(Convert.ToDecimal(0.00)); grouppedItem.Waluta.Add(""); }
+                        if (grouppedItem.TwrGidNumer.Count() > 1)
                         {
                             grouppedItem.WieleKodow = true;
+                            int indexList = grouppedItem.TwrGidNumer.FindIndex(x => x.Equals(0));
+                            while (indexList != -1)
+                            {
+                                grouppedItem.TwrGidNumer.RemoveAt(indexList);
+                                grouppedItem.Nazwa.RemoveAt(indexList);
+                                grouppedItem.KodSystem.RemoveAt(indexList);
+                                grouppedItem.Dostawca.RemoveAt(indexList);
+                                grouppedItem.OstatniaCenaZakupu.RemoveAt(indexList);
+                                grouppedItem.Waluta.RemoveAt(indexList);
+                                indexList = grouppedItem.TwrGidNumer.FindIndex(x => x.Equals(0));
+                            }
                         }
                         else
                         {
@@ -174,25 +250,30 @@ namespace ZaczytywanieKodow
                         }
 
                         grouppedItems.Add(grouppedItem);
-
                         index += 1;
                         uniqueKodDostawcy.Add(item.KodDostawcy);
+                        
                     }
                 }
                 foreach( var grouppedItem in grouppedItems )
                 {
                     if (!grouppedItem.WieleKodow)
                     {
-                        kodyLista.Rows.Add(grouppedItem.TwrGidNumer[0], grouppedItem.KodSystem[0], grouppedItem.KodDostawcy, grouppedItem.Dostawca[0], grouppedItem.PolaczoneKody, grouppedItem.Wyszukiwania, "szczegó³y");
+                        kodyLista.Rows.Add(grouppedItem.TwrGidNumer[0], grouppedItem.KodSystem[0], grouppedItem.Nazwa[0], grouppedItem.KodDostawcy, grouppedItem.Dostawca[0], grouppedItem.OstatniaCenaZakupu[0], grouppedItem.Waluta[0], grouppedItem.PolaczoneKody, grouppedItem.Wyszukiwania, "szczegó³y");
                     }
                     else
                     {
-                        /*foreach(var kod in grouppedItem.KodSystem)
-                        {
-                            MessageBox.Show(kod);
-                        }*/
-                        index = kodyLista.Rows.Add(0, "Wybierz", grouppedItem.KodDostawcy, "", grouppedItem.PolaczoneKody, grouppedItem.Wyszukiwania, "szczegó³y");
+                        index = kodyLista.Rows.Add(0, "Wybierz", "", grouppedItem.KodDostawcy, "", 0, "", grouppedItem.PolaczoneKody, grouppedItem.Wyszukiwania, "szczegó³y");
                         kodyLista.Rows[index].Cells["kodSystem"].Style.BackColor = System.Drawing.Color.Red;
+                    }
+                }
+
+                foreach (DataGridViewRow dr in this.kodyLista.Rows)
+                {
+                    if (dr.Cells["twrGidNumer"].Value.ToString() == "0")
+                    {
+                        DataGridViewTextBoxCell txtcell = new DataGridViewTextBoxCell();
+                        dr.Cells["szczegoly"] = txtcell;
                     }
                 }
 
@@ -219,24 +300,45 @@ namespace ZaczytywanieKodow
         {
             try
             {
-                if (e.ColumnIndex == kodyLista.Columns["kodSystem"].Index && e.RowIndex >= 0 && items.ElementAt(e.RowIndex).TwrGidNumer.Count > 1)
+                if (e.ColumnIndex == kodyLista.Columns["kodSystem"].Index && e.RowIndex >= 0 && grouppedItems.ElementAt(e.RowIndex).WieleKodow)
                 {
                     var item = grouppedItems.Where((GrouppedItem arg) => arg.Id == e.RowIndex).FirstOrDefault();
 
-                    using (var forma = new WyborTowaru(item))
+                    using (var forma = new WyborTowaru(item, APIVersion))
                     {
                         var result = forma.ShowDialog();
 
                         if (result == DialogResult.OK) // jesli forma zwraca wynik
                         {
                             string wybranyKod = forma.ReturnValue1;
-                            string dostawca = forma.ReturnValue2;
-                            string twrGid = forma.ReturnValue3;
+                            string nazwa = forma.ReturnValue2;
+                            string dostawca = forma.ReturnValue3;
+                            string twrGid = forma.ReturnValue4;
+                            string ostCenaZak = forma.ReturnValue5;
+                            string waluta = forma.ReturnValue6;
+                            grouppedItems[e.RowIndex] = forma.item;
 
                             kodyLista.Rows[e.RowIndex].Cells["kodSystem"].Value = wybranyKod;
+                            kodyLista.Rows[e.RowIndex].Cells["nazwa"].Value = nazwa;
                             kodyLista.Rows[e.RowIndex].Cells["dostawca"].Value = dostawca;
                             kodyLista.Rows[e.RowIndex].Cells["twrGidNumer"].Value = twrGid;
+                            kodyLista.Rows[e.RowIndex].Cells["ostCenaZak"].Value = ostCenaZak;
+                            kodyLista.Rows[e.RowIndex].Cells["waluta"].Value = waluta;
                             kodyLista.Rows[e.RowIndex].Cells["kodSystem"].Style.BackColor = DefaultBackColor;
+
+                            if (kodyLista.Rows[e.RowIndex].Cells["twrGidNumer"].Value.ToString() == "0")
+                            {
+                                DataGridViewTextBoxCell txtcell = new DataGridViewTextBoxCell();
+                                txtcell.Value = "szczegó³y";
+                                kodyLista.Rows[e.RowIndex].Cells["szczegoly"] = txtcell;
+                            }
+                            else
+                            {
+                                DataGridViewButtonCell buttonCell = new DataGridViewButtonCell();
+                                buttonCell.Value = "szczegó³y";
+                                buttonCell.Style = kodyLista.Columns["szczegoly"].DefaultCellStyle;
+                                kodyLista.Rows[e.RowIndex].Cells["szczegoly"] = buttonCell;
+                            }
                         }
                     }
                 }
@@ -253,10 +355,6 @@ namespace ZaczytywanieKodow
                         {
                             forma.ShowDialog();
                         }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Brak kodu w XL", "Informacja", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
             }

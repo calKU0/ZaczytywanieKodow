@@ -36,9 +36,12 @@ namespace ZaczytywanieKodow
             this.kodyLista = new System.Windows.Forms.DataGridView();
             this.twrGidNumer = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.kodSystem = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.nazwa = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.kodDostawcy = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.kodOem = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dostawca = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ostCenaZak = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.waluta = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.wyszukiwania = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.polaczoneNumery = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.szczegoly = new System.Windows.Forms.DataGridViewButtonColumn();
@@ -97,6 +100,14 @@ namespace ZaczytywanieKodow
             this.kodSystem.ReadOnly = true;
             this.kodSystem.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
+            // nazwa
+            // 
+            this.nazwa.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.nazwa.HeaderText = "Nazwa towaru";
+            this.nazwa.Name = "nazwa";
+            this.nazwa.ReadOnly = true;
+            this.nazwa.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
             // kodDostawcy
             // 
             this.kodDostawcy.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
@@ -120,6 +131,22 @@ namespace ZaczytywanieKodow
             this.dostawca.Name = "dostawca";
             this.dostawca.ReadOnly = true;
             this.dostawca.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // ostCenaZak
+            // 
+            this.ostCenaZak.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.ostCenaZak.HeaderText = "Cena FZ/FAI";
+            this.ostCenaZak.Name = "ostCenaZak";
+            this.ostCenaZak.ReadOnly = true;
+            this.ostCenaZak.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // waluta
+            // 
+            this.waluta.HeaderText = "Waluta";
+            this.waluta.Name = "waluta";
+            this.waluta.ReadOnly = true;
+            this.waluta.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.waluta.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // wyszukiwania
             // 
@@ -271,6 +298,8 @@ namespace ZaczytywanieKodow
             this.Text = "Lista Kodów";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             ((System.ComponentModel.ISupportInitialize)(this.kodyLista)).EndInit();
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ListaKodow_FormClosing);
+            this.Load += new System.EventHandler(this.ListaKodow_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -284,9 +313,12 @@ namespace ZaczytywanieKodow
         private DataGridView kodyLista;
         private DataGridViewTextBoxColumn twrGidNumer;
         private DataGridViewTextBoxColumn kodSystem;
+        private DataGridViewTextBoxColumn nazwa;
         private DataGridViewTextBoxColumn kodDostawcy;
         private DataGridViewTextBoxColumn kodOem;
         private DataGridViewTextBoxColumn dostawca;
+        private DataGridViewTextBoxColumn ostCenaZak;
+        private DataGridViewTextBoxColumn waluta;
         private DataGridViewTextBoxColumn wyszukiwania;
         private DataGridViewTextBoxColumn polaczoneNumery;
         private DataGridViewButtonColumn szczegoly;
