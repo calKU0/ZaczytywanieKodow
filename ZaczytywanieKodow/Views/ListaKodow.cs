@@ -10,6 +10,7 @@ using ZaczytywanieKodow.Views;
 using System.Linq.Expressions;
 using System.Drawing;
 using System.Configuration;
+using cdn_api;
 
 namespace ZaczytywanieKodow
 {
@@ -259,11 +260,11 @@ namespace ZaczytywanieKodow
                 {
                     if (!grouppedItem.WieleKodow)
                     {
-                        kodyLista.Rows.Add(grouppedItem.TwrGidNumer[0], grouppedItem.KodSystem[0], grouppedItem.Nazwa[0], grouppedItem.KodDostawcy, grouppedItem.Dostawca[0], grouppedItem.OstatniaCenaZakupu[0], grouppedItem.Waluta[0], grouppedItem.PolaczoneKody, grouppedItem.Wyszukiwania, "szczegó³y");
+                        kodyLista.Rows.Add(grouppedItem.TwrGidNumer[0], grouppedItem.KodSystem[0], grouppedItem.Nazwa[0], grouppedItem.KodDostawcy, grouppedItem.Dostawca[0], grouppedItem.OstatniaCenaZakupu[0].ToString("0.00"), grouppedItem.Waluta[0], grouppedItem.PolaczoneKody, grouppedItem.Wyszukiwania, "szczegó³y");
                     }
                     else
                     {
-                        index = kodyLista.Rows.Add(0, "Wybierz", "", grouppedItem.KodDostawcy, "", 0, "", grouppedItem.PolaczoneKody, grouppedItem.Wyszukiwania, "szczegó³y");
+                        index = kodyLista.Rows.Add(0, "Wybierz", "", grouppedItem.KodDostawcy, "", 0.00.ToString("0.00"), "", grouppedItem.PolaczoneKody, grouppedItem.Wyszukiwania, "szczegó³y");
                         kodyLista.Rows[index].Cells["kodSystem"].Style.BackColor = System.Drawing.Color.Red;
                     }
                 }
@@ -362,9 +363,27 @@ namespace ZaczytywanieKodow
 
         }
 
+        private void kodyLista_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                if ((e.ColumnIndex == kodyLista.Columns["wyszukiwania"].Index || e.ColumnIndex == kodyLista.Columns["polaczoneNumery"].Index) && e.RowIndex >= 0)
+                {
+                    using (var forma = new WyszukiwaniaForm(items
+                                     .Where(i => i.PolaczoneKody == grouppedItems.ElementAt(e.RowIndex).PolaczoneKody)
+                                     .ToList()))
+                    {
+                        forma.ShowDialog();
+                    }
+                }
+            }
+            catch (Exception ex) { MessageBox.Show("Wyst¹pi³ b³¹d przy próbie zaczytania wyszukiwañ " + ex, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+        }
+
         private void Wyczysc()
         {
             items.Clear();
+            grouppedItems.Clear();
             kodyLista.Rows.Clear();
             kodyLista.Refresh();
             AnulujButton.Enabled = false;

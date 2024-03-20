@@ -82,6 +82,7 @@ namespace ZaczytywanieKodow
             this.kodyLista.Size = new System.Drawing.Size(1423, 848);
             this.kodyLista.TabIndex = 3;
             this.kodyLista.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.kodyLista_CellClick);
+            this.kodyLista.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.kodyLista_CellDoubleClick);
             // 
             // twrGidNumer
             // 

@@ -105,6 +105,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\WyszukiwaniaForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\WyszukiwaniaForm.Designer.cs">
+      <DependentUpon>WyszukiwaniaForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Views\ListaKodow.resx">
       <DependentUpon>ListaKodow.cs</DependentUpon>
     </EmbeddedResource>
@@ -124,6 +130,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Views\WyszukiwaniaForm.resx">
+      <DependentUpon>WyszukiwaniaForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -158,6 +167,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\search %283%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\..\..\..\..\Comarch\API 2023.1\cdn_api20231.net.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

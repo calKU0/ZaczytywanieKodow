@@ -36,7 +36,7 @@ namespace ZaczytywanieKodow
 
                 if (!uniqueRows.Contains(rowKey))
                 {
-                    dataGridView1.Rows.Add("", item.KodSystem[i], item.Nazwa[i], item.Dostawca[i], item.TwrGidNumer[i], item.OstatniaCenaZakupu[i], item.Waluta[i]);
+                    dataGridView1.Rows.Add("", item.KodSystem[i], item.Nazwa[i], item.Dostawca[i], item.TwrGidNumer[i], item.OstatniaCenaZakupu[i].ToString("0.00"), item.Waluta[i]);
                     uniqueRows.Add(rowKey);
                 }
             }
@@ -84,7 +84,6 @@ namespace ZaczytywanieKodow
                     int wynik = cdn_api.cdn_api.XLUruchomFormatkeWgGID(XLGIDGrupaInfo);
                     this.Enabled = true;
                     this.TopMost = true;
-                    this.TopMost = false;
 
                     if (wynik != 0)
                     {
