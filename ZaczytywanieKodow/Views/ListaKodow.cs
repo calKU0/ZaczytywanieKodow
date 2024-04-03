@@ -258,14 +258,18 @@ namespace ZaczytywanieKodow
                 }
                 foreach( var grouppedItem in grouppedItems )
                 {
-                    if (!grouppedItem.WieleKodow)
+                    /*if (!grouppedItem.WieleKodow)
                     {
                         kodyLista.Rows.Add(grouppedItem.TwrGidNumer[0], grouppedItem.KodSystem[0], grouppedItem.Nazwa[0], grouppedItem.KodDostawcy, grouppedItem.Dostawca[0], grouppedItem.OstatniaCenaZakupu[0].ToString("0.00"), grouppedItem.Waluta[0], grouppedItem.PolaczoneKody, grouppedItem.Wyszukiwania, "szczegó³y");
-                    }
-                    else
+                    }*/
+                    if (grouppedItem.TwrGidNumer[0].ToString().Length > 1)
                     {
                         index = kodyLista.Rows.Add(0, "Wybierz", "", grouppedItem.KodDostawcy, "", 0.00.ToString("0.00"), "", grouppedItem.PolaczoneKody, grouppedItem.Wyszukiwania, "szczegó³y");
                         kodyLista.Rows[index].Cells["kodSystem"].Style.BackColor = System.Drawing.Color.Red;
+                    }
+                    else
+                    {
+                        kodyLista.Rows.Add(grouppedItem.TwrGidNumer[0], grouppedItem.KodSystem[0], grouppedItem.Nazwa[0], grouppedItem.KodDostawcy, grouppedItem.Dostawca[0], grouppedItem.OstatniaCenaZakupu[0].ToString("0.00"), grouppedItem.Waluta[0], grouppedItem.PolaczoneKody, grouppedItem.Wyszukiwania, "szczegó³y");
                     }
                 }
 
@@ -378,6 +382,20 @@ namespace ZaczytywanieKodow
                 }
             }
             catch (Exception ex) { MessageBox.Show("Wyst¹pi³ b³¹d przy próbie zaczytania wyszukiwañ " + ex, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+        }
+
+        private void kodyLista_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if ((e.ColumnIndex == kodyLista.Columns["wyszukiwania"].Index || e.ColumnIndex == kodyLista.Columns["polaczoneNumery"].Index) && e.RowIndex >= 0)
+            {
+                var cell = kodyLista.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                cell.ToolTipText = "Kliknij podwójnie, aby wyœwietliæ poszczególne wyszukiwania kodów OEM";
+            }
+            else if (e.ColumnIndex == kodyLista.Columns["szczegoly"].Index)
+            {
+                var cell = kodyLista.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                cell.ToolTipText = "Kliknij, aby wyœwietliæ szczegó³y wyszukiwaæ karty towarowej";
+            }
         }
 
         private void Wyczysc()
