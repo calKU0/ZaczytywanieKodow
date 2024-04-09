@@ -18,7 +18,7 @@ namespace ZaczytywanieKodow.Views
             InitializeComponent();
             foreach (Item item in items) 
             {
-                dataGridView1.Rows.Add(item.KodOem, item.Wyszukiwania);
+                dataGridView1.Rows.Add(item.KodOem, item.Grupa6, item.Zastosowanie, item.Wyszukiwania);
             }
         }
     }

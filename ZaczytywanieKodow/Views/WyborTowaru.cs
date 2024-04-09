@@ -11,6 +11,7 @@ using ZaczytywanieKodow.Models;
 using cdn_api;
 using System.Configuration;
 using System.Runtime.InteropServices;
+using ZaczytywanieKodow.Views;
 
 namespace ZaczytywanieKodow
 {
@@ -27,21 +28,9 @@ namespace ZaczytywanieKodow
         public WyborTowaru(GrouppedItem item, int APIVersion)
         {
             InitializeComponent();
-
-            HashSet<string> uniqueRows = new HashSet<string>();
-
-            for (int i = 0; i < item.KodSystem.Count; i++)
-            {
-                string rowKey = $"{item.KodSystem[i]}_{item.Nazwa[i]}_{item.Dostawca[i]}_{item.TwrGidNumer[i]}_{item.OstatniaCenaZakupu[i]}_{item.Waluta[i]}";
-
-                if (!uniqueRows.Contains(rowKey))
-                {
-                    dataGridView1.Rows.Add("", item.KodSystem[i], item.Nazwa[i], item.Dostawca[i], item.TwrGidNumer[i], item.OstatniaCenaZakupu[i].ToString("0.00"), item.Waluta[i]);
-                    uniqueRows.Add(rowKey);
-                }
-            }
             this.APIVersion = APIVersion;
             this.item = item;
+            InitializeRows();
         }
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -113,6 +102,78 @@ namespace ZaczytywanieKodow
 
                 e.Graphics.DrawImage(Properties.Resources.search, new Rectangle(x, y, w, h));
                 e.Handled = true;
+            }
+        }
+
+        private void WybierzKarteZListyButton_Click(object sender, EventArgs e)
+        {
+            /*using (var forma = new DodajTowar(item))
+            {
+                var result = forma.ShowDialog();
+                if (forma.DialogResult == DialogResult.OK)
+                {
+                    item.TwrGidNumer.Add(forma.GidZalozonegoTowaru);
+                    item.Nazwa.Add(forma.Nazwa);
+                    item.KodSystem.Add(forma.Kod);
+                    item.Dostawca.Add(ListaKodow.kontrahentAkronim);
+                    item.OstatniaCenaZakupu.Add(Convert.ToDecimal(0.00));
+                    item.Waluta.Add("");
+
+                    dataGridView1.Rows.Clear();
+                    InitializeRows();
+                }
+            }*/
+
+            try
+            {
+                XLGIDGrupaInfo_20231 XLGIDGrupaInfo = new XLGIDGrupaInfo_20231();
+                XLGIDGrupaInfo.Wersja = ListaKodow.APIVersion;
+                XLGIDGrupaInfo.GIDTyp = 16;
+                XLGIDGrupaInfo.GIDNumer = -1;
+                XLGIDGrupaInfo.GIDLp = 0;
+
+                int wynik = cdn_api.cdn_api.XLUruchomFormatkeWgGID(XLGIDGrupaInfo);
+                int GIDNumer = 0;
+                GIDNumer = XLGIDGrupaInfo.GIDNumer;
+
+                if (wynik != 0)
+                {
+                    MessageBox.Show("Błąd wybierania karty towarowej", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    Dictionary<string,string> daneTowaru = Excel.PobierzDaneTowaru(GIDNumer);
+
+                    item.TwrGidNumer.Add(GIDNumer);
+                    item.KodSystem.Add(daneTowaru["twrKod"]);
+                    item.Nazwa.Add(daneTowaru["twrNazwa"]);
+                    item.Dostawca.Add(daneTowaru["kntNazwa"]);
+                    item.OstatniaCenaZakupu.Add(Convert.ToDecimal(daneTowaru["ostCena"]));
+                    item.Waluta.Add(daneTowaru["waluta"]);
+
+                    dataGridView1.Rows.Clear();
+                    InitializeRows();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd wybierania karty towarowej " + ex, "BŁĄD", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //throw new Exception(ex.Message);
+            }
+        }
+        private void InitializeRows()
+        {
+            HashSet<string> uniqueRows = new HashSet<string>();
+
+            for (int i = 0; i < item.KodSystem.Count; i++)
+            {
+                string rowKey = $"{item.KodSystem[i]}_{item.Nazwa[i]}_{item.Dostawca[i]}_{item.TwrGidNumer[i]}_{item.OstatniaCenaZakupu[i]}_{item.Waluta[i]}";
+
+                if (!uniqueRows.Contains(rowKey))
+                {
+                    dataGridView1.Rows.Add("", item.KodSystem[i], item.Nazwa[i], item.Dostawca[i], item.TwrGidNumer[i], item.OstatniaCenaZakupu[i].ToString("0.00"), item.Waluta[i]);
+                    uniqueRows.Add(rowKey);
+                }
             }
         }
     }

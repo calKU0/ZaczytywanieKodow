@@ -11,6 +11,9 @@ namespace ZaczytywanieKodow.Models
         public List<decimal> OstatniaCenaZakupu { get; set; }
         public List<string> Waluta { get; set; }
         public string KodDostawcy { get; set; }
+        public string CenaZakupu { get; set; }
+        public string Grupa { get; set; }
+        public string Zastosowanie { get; set; }
         public List<string> Dostawca { get; set; }
         public int Wyszukiwania { get; set; }
         public string PolaczoneKody { get; set; }

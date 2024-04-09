@@ -85,6 +85,18 @@
     <Compile Include="Services\Excel.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Services\Prompt.cs" />
+    <Compile Include="Views\DodajTowar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\DodajTowar.Designer.cs">
+      <DependentUpon>DodajTowar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dostawcy.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Dostawcy.Designer.cs">
+      <DependentUpon>Dostawcy.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\Szczegoly.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -111,6 +123,12 @@
     <Compile Include="Views\WyszukiwaniaForm.Designer.cs">
       <DependentUpon>WyszukiwaniaForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Views\DodajTowar.resx">
+      <DependentUpon>DodajTowar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Dostawcy.resx">
+      <DependentUpon>Dostawcy.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\ListaKodow.resx">
       <DependentUpon>ListaKodow.cs</DependentUpon>
     </EmbeddedResource>

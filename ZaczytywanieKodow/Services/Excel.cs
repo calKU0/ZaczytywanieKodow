@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Data;
 using excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace ZaczytywanieKodow
 {
@@ -71,6 +72,9 @@ namespace ZaczytywanieKodow
                 {
                     item.KodDostawcy = ((excel.Range)range.Cells[numerWiersza, 2]).FormulaR1C1Local.ToString() ?? "";
                     item.KodOem = ((excel.Range)range.Cells[numerWiersza, 3]).FormulaR1C1Local.ToString() ?? "";
+                    item.CenaZakupu = ((excel.Range)range.Cells[numerWiersza, 4]).FormulaR1C1Local.ToString() ?? "";
+                    item.Grupa6 = ((excel.Range)range.Cells[numerWiersza, 9]).FormulaR1C1Local.ToString() ?? "";
+                    item.Zastosowanie = ((excel.Range)range.Cells[numerWiersza, 10]).FormulaR1C1Local.ToString() ?? "";
                     if (item.KodDostawcy == "") { return item; }
 
                     string query = @"IF NOT EXISTS (SELECT TKO_GIDNumer FROM dbo.TwrKodyOem where TKO_Oem = '" + item.KodOem + @"')
@@ -272,6 +276,113 @@ namespace ZaczytywanieKodow
             }
             catch (Exception ex) { MessageBox.Show("Problem z otwarciem szczegółów\n " + ex, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error); }
             return dt;
+        }
+
+        public static string ZwrocAkronimKontrahenta(int kntGidNumer)
+        {
+            string wynik = "";
+            try
+            {
+                string select = @"SELECT knt_akronim FROM cdn.kntkarty where knt_gidnumer = @kntgid";
+
+                string connectionString = ConfigurationManager.ConnectionStrings["GaskaConnectionString"].ConnectionString;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    SqlCommand selectCommand = new SqlCommand(select, connection);
+                    selectCommand.Parameters.AddWithValue("@kntgid", kntGidNumer);
+                    wynik = (string)selectCommand.ExecuteScalar();
+                }
+            }
+            catch (Exception ex) { MessageBox.Show("Problem z otwarciem szczegółów\n " + ex, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+            return wynik;
+        }
+
+        public static Dictionary<string,string> PobierzDaneTowaru(int twrGid)
+        {
+            Dictionary<string,string> result = new Dictionary<string,string>();
+
+            try
+            {
+                string select = @"SELECT distinct isnull(twr_gidnumer,0) as twrGidNumer
+	                                    ,isnull(twr_kod,'') as twrKod
+                                        ,isnull(twr_nazwa,'') as twrNazwa
+	                                    ,isnull((select top 1 isnull(knt_akronim,'') from cdn.twrdost with (nolock) join cdn.kntkarty with (nolock) on knt_gidnumer = twd_kntnumer where Twr_GIDNumer=TWD_TwrNumer and TWD_KlasaKnt = 8),'') as kntAkronim
+                                        ,isnull((select top 1 zakupowe.Cena from(
+											select ImE_Cena as [Cena]
+											,ImN_GIDNumer as [DokumentGidNumer]
+											,ImE_TwrNumer as [TowarGidNumer]
+											,ImN_DataWystawienia as [DataWystawienia]
+											from cdn.impnag with (nolock)
+											join cdn.impelem with(nolock) on ImE_GIDNumer = ImN_GIDNumer
+											where ImN_GIDTyp=3344
+
+											union all
+
+											select TrE_Cena as [Cena]
+											,TrN_GIDNumer as [DokumentGidNumer]
+											,TrE_TwrNumer as [TowarGidNumer]
+											,TrN_Data2 as [DataWystawienia]
+											from cdn.TraNag with (nolock)
+											join cdn.TraElem with (nolock) on TrN_GIDTyp=TrE_GIDTyp AND TrN_GIDNumer=TrE_GIDNumer
+											where TrN_GIDTyp = 1521
+										) zakupowe
+										where zakupowe.TowarGidNumer = Twr_GIDNumer
+										order by zakupowe.DataWystawienia desc, zakupowe.DokumentGidNumer desc
+									),0) as [ostCena]
+	                                    ,isnull((
+		                                    select top 1 zakupowe.Waluta
+		                                    from
+		                                    (
+			                                    select ImE_Cena as [Cena]
+			                                    ,ImN_Waluta as [Waluta]
+			                                    ,ImN_GIDNumer as [DokumentGidNumer]
+			                                    ,ImE_TwrNumer as [TowarGidNumer]
+			                                    ,ImN_DataWystawienia as [DataWystawienia]
+			                                    from cdn.impnag with (nolock)
+			                                    join cdn.impelem with(nolock) on ImE_GIDNumer = ImN_GIDNumer
+			                                    where ImN_GIDTyp=3344
+
+			                                    union all
+
+			                                    select TrE_Cena as [Cena]
+			                                    ,tre_waluta as [Waluta]
+			                                    ,TrN_GIDNumer as [DokumentGidNumer]
+			                                    ,TrE_TwrNumer as [TowarGidNumer]
+			                                    ,TrN_Data2 as [DataWystawienia]
+			                                    from cdn.TraNag with (nolock)
+			                                    join cdn.TraElem with (nolock) on TrN_GIDTyp=TrE_GIDTyp AND TrN_GIDNumer=TrE_GIDNumer
+			                                    where TrN_GIDTyp = 1521
+		                                    ) zakupowe
+		                                    where zakupowe.TowarGidNumer = Twr_GIDNumer
+		                                    order by zakupowe.DataWystawienia desc, zakupowe.DokumentGidNumer desc
+	                                    ),'') as waluta
+	                                    from cdn.twrkarty with (nolock)
+	                                    left join cdn.twrAplikacjeOpisy with (nolock) on Twr_GIDTyp=TPO_ObiTyp AND Twr_GIDNumer=TPO_ObiNumer
+	                                    left join cdn.twrkarty with (nolock) on Twr_GIDTyp=TPO_ObiTyp AND Twr_GIDNumer=TPO_ObiNumer 
+                                        where Twr_Archiwalny = 0 and Twr_Gidnumer = @gidnumer";
+
+                string connectionString = ConfigurationManager.ConnectionStrings["GaskaConnectionString"].ConnectionString;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    SqlCommand selectCommand = new SqlCommand(select, connection);
+                    selectCommand.Parameters.AddWithValue("@gidnumer", twrGid);
+                    using (SqlDataReader reader = selectCommand.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            result.Add("twrKod", reader["twrKod"].ToString());
+                            result.Add("twrNazwa", reader["twrNazwa"].ToString());
+                            result.Add("kntAkronim", reader["kntAkronim"].ToString());
+                            result.Add("ostCena", reader["ostCena"].ToString());
+                            result.Add("waluta", reader["waluta"].ToString());
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) { MessageBox.Show("Problem z otwarciem szczegółów\n " + ex, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+            return result;
         }
     }
 }
