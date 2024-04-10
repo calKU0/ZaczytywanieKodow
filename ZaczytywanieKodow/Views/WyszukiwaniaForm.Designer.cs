@@ -33,7 +33,6 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.kodOem = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.grupa = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.zastosowanie = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.wyszukiwania = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -56,7 +55,6 @@
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.kodOem,
-            this.grupa,
             this.zastosowanie,
             this.wyszukiwania});
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -88,13 +86,6 @@
             this.kodOem.Name = "kodOem";
             this.kodOem.ReadOnly = true;
             this.kodOem.Width = 59;
-            // 
-            // grupa
-            // 
-            this.grupa.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.grupa.HeaderText = "Grupa";
-            this.grupa.Name = "grupa";
-            this.grupa.ReadOnly = true;
             // 
             // zastosowanie
             // 
@@ -129,7 +120,6 @@
 
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.DataGridViewTextBoxColumn kodOem;
-        private System.Windows.Forms.DataGridViewTextBoxColumn grupa;
         private System.Windows.Forms.DataGridViewTextBoxColumn zastosowanie;
         private System.Windows.Forms.DataGridViewTextBoxColumn wyszukiwania;
     }

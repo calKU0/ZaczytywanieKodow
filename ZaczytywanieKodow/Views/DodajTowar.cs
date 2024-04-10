@@ -35,7 +35,6 @@ namespace ZaczytywanieKodow.Views
 
         public DodajTowar(GrouppedItem item)
         {
-            Grupa6 = item.Grupa;
             CenaDst = item.CenaZakupu;
             NumeryOEM = item.PolaczoneKody.Split(',').ToList();
             KodDostawcy = item.KodDostawcy;
@@ -48,7 +47,6 @@ namespace ZaczytywanieKodow.Views
             walutaDostawcyComboBox.Items.AddRange(waluty);
 
             kodDostawcyTextBox.Text = KodDostawcy;
-            grupa6TextBox.Text = Grupa6;
             cenaDstTextBox.Text = CenaDst;
 
             foreach (string OEM in NumeryOEM)
@@ -64,7 +62,6 @@ namespace ZaczytywanieKodow.Views
                 Kod = kodTextBox.Text.Trim();
                 Nazwa = nazwaTextBox.Text.Trim();
                 KodPcn = kodPCNTextBox.Text.Trim();
-                Grupa = grupaTextBox.Text.Trim();
                 WalutaDostawcy = walutaDostawcyComboBox.Text.Trim();
 
                 if (String.IsNullOrEmpty(Kod)

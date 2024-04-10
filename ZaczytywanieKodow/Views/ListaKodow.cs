@@ -27,7 +27,7 @@ namespace ZaczytywanieKodow
         public ListaKodow()
         {
             InitializeComponent();
-            kodyLista.Columns.AddRange(new DataGridViewColumn[] { twrGidNumer, kodSystem, nazwa, kodDostawcy, dostawca, cena, ostCenaZak, waluta, polaczoneNumery, grupa, zastosowanie, wyszukiwania, szczegoly });
+            kodyLista.Columns.AddRange(new DataGridViewColumn[] { twrGidNumer, kodSystem, nazwa, kodDostawcy, dostawca, cena, ostCenaZak, waluta, polaczoneNumery, zastosowanie, wyszukiwania, szczegoly });
         }
 
         public void ListaKodow_Load(object sender, EventArgs e)
@@ -212,7 +212,6 @@ namespace ZaczytywanieKodow
                         GrouppedItem grouppedItem = new GrouppedItem();
                         grouppedItem.Id = index;
                         grouppedItem.KodDostawcy = item.KodDostawcy;
-                        grouppedItem.Grupa = item.Grupa6;
                         grouppedItem.CenaZakupu = item.CenaZakupu;
                         grouppedItem.PolaczoneKody = item.PolaczoneKody;
                         grouppedItem.Zastosowanie = item.PolaczoneZastosowanie;
@@ -275,7 +274,7 @@ namespace ZaczytywanieKodow
 
                 foreach( var grouppedItem in grouppedItems )
                 {
-                    index = kodyLista.Rows.Add(0, "Wybierz kartê", String.Empty, grouppedItem.KodDostawcy, String.Empty, grouppedItem.CenaZakupu, 0.00.ToString("0.00"), "", grouppedItem.PolaczoneKody, grouppedItem.Grupa, grouppedItem.Zastosowanie, grouppedItem.Wyszukiwania, "szczegó³y");
+                    index = kodyLista.Rows.Add(0, "Wybierz kartê", String.Empty, grouppedItem.KodDostawcy, String.Empty, grouppedItem.CenaZakupu, 0.00.ToString("0.00"), "", grouppedItem.PolaczoneKody, grouppedItem.Zastosowanie, grouppedItem.Wyszukiwania, "szczegó³y");
                 }
                 foreach (DataGridViewRow dr in this.kodyLista.Rows)
                 {
@@ -409,8 +408,7 @@ namespace ZaczytywanieKodow
             {
                 if ((e.ColumnIndex == kodyLista.Columns["wyszukiwania"].Index 
                     || e.ColumnIndex == kodyLista.Columns["polaczoneNumery"].Index 
-                    || e.ColumnIndex == kodyLista.Columns["zastosowanie"].Index
-                    || e.ColumnIndex == kodyLista.Columns["grupa"].Index)
+                    || e.ColumnIndex == kodyLista.Columns["zastosowanie"].Index)
                     && e.RowIndex >= 0)
 
 
@@ -430,8 +428,7 @@ namespace ZaczytywanieKodow
         {
             if ((e.ColumnIndex == kodyLista.Columns["wyszukiwania"].Index 
                 || e.ColumnIndex == kodyLista.Columns["polaczoneNumery"].Index
-                || e.ColumnIndex == kodyLista.Columns["zastosowanie"].Index
-                || e.ColumnIndex == kodyLista.Columns["grupa"].Index) 
+                || e.ColumnIndex == kodyLista.Columns["zastosowanie"].Index) 
                 && e.RowIndex >= 0)
             {
                 var cell = kodyLista.Rows[e.RowIndex].Cells[e.ColumnIndex];

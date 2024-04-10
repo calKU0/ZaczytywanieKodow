@@ -46,7 +46,6 @@ namespace ZaczytywanieKodow
             this.cena = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ostCenaZak = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.waluta = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.grupa = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.zastosowanie = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.wyszukiwania = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.polaczoneNumery = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -188,14 +187,6 @@ namespace ZaczytywanieKodow
             this.waluta.Name = "waluta";
             this.waluta.ReadOnly = true;
             this.waluta.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // grupa
-            // 
-            this.grupa.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.grupa.HeaderText = "Grupa 6.1";
-            this.grupa.Name = "grupa";
-            this.grupa.ReadOnly = true;
-            this.grupa.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // zastosowanie
             // 
@@ -400,7 +391,6 @@ namespace ZaczytywanieKodow
         private DataGridViewTextBoxColumn cena;
         private DataGridViewTextBoxColumn ostCenaZak;
         private DataGridViewTextBoxColumn waluta;
-        private DataGridViewTextBoxColumn grupa;
         private DataGridViewTextBoxColumn zastosowanie;
         private DataGridViewTextBoxColumn wyszukiwania;
         private DataGridViewTextBoxColumn polaczoneNumery;

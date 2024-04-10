@@ -147,7 +147,7 @@ namespace ZaczytywanieKodow
                     item.TwrGidNumer.Add(GIDNumer);
                     item.KodSystem.Add(daneTowaru["twrKod"]);
                     item.Nazwa.Add(daneTowaru["twrNazwa"]);
-                    item.Dostawca.Add(daneTowaru["kntNazwa"]);
+                    item.Dostawca.Add(daneTowaru["kntAkronim"]);
                     item.OstatniaCenaZakupu.Add(Convert.ToDecimal(daneTowaru["ostCena"]));
                     item.Waluta.Add(daneTowaru["waluta"]);
 
@@ -169,7 +169,7 @@ namespace ZaczytywanieKodow
             {
                 string rowKey = $"{item.KodSystem[i]}_{item.Nazwa[i]}_{item.Dostawca[i]}_{item.TwrGidNumer[i]}_{item.OstatniaCenaZakupu[i]}_{item.Waluta[i]}";
 
-                if (!uniqueRows.Contains(rowKey))
+                if (!uniqueRows.Contains(rowKey) && item.KodSystem[i] != "")
                 {
                     dataGridView1.Rows.Add("", item.KodSystem[i], item.Nazwa[i], item.Dostawca[i], item.TwrGidNumer[i], item.OstatniaCenaZakupu[i].ToString("0.00"), item.Waluta[i]);
                     uniqueRows.Add(rowKey);

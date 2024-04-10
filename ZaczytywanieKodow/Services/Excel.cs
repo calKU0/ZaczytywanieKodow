@@ -70,11 +70,10 @@ namespace ZaczytywanieKodow
             {
                 if (czyPlikOtwarty == true)
                 {
-                    item.KodDostawcy = ((excel.Range)range.Cells[numerWiersza, 2]).FormulaR1C1Local.ToString() ?? "";
-                    item.KodOem = ((excel.Range)range.Cells[numerWiersza, 3]).FormulaR1C1Local.ToString() ?? "";
-                    item.CenaZakupu = ((excel.Range)range.Cells[numerWiersza, 4]).FormulaR1C1Local.ToString() ?? "";
-                    item.Grupa6 = ((excel.Range)range.Cells[numerWiersza, 9]).FormulaR1C1Local.ToString() ?? "";
-                    item.Zastosowanie = ((excel.Range)range.Cells[numerWiersza, 10]).FormulaR1C1Local.ToString() ?? "";
+                    item.KodDostawcy = ((excel.Range)range.Cells[numerWiersza, 1]).FormulaR1C1Local.ToString() ?? "";
+                    item.KodOem = ((excel.Range)range.Cells[numerWiersza, 2]).FormulaR1C1Local.ToString() ?? "";
+                    item.CenaZakupu = ((excel.Range)range.Cells[numerWiersza, 3]).FormulaR1C1Local.ToString() ?? "";
+                    item.Zastosowanie = ((excel.Range)range.Cells[numerWiersza, 4]).FormulaR1C1Local.ToString() ?? "";
                     if (item.KodDostawcy == "") { return item; }
 
                     string query = @"IF NOT EXISTS (SELECT TKO_GIDNumer FROM dbo.TwrKodyOem where TKO_Oem = '" + item.KodOem + @"')
@@ -358,8 +357,6 @@ namespace ZaczytywanieKodow
 		                                    order by zakupowe.DataWystawienia desc, zakupowe.DokumentGidNumer desc
 	                                    ),'') as waluta
 	                                    from cdn.twrkarty with (nolock)
-	                                    left join cdn.twrAplikacjeOpisy with (nolock) on Twr_GIDTyp=TPO_ObiTyp AND Twr_GIDNumer=TPO_ObiNumer
-	                                    left join cdn.twrkarty with (nolock) on Twr_GIDTyp=TPO_ObiTyp AND Twr_GIDNumer=TPO_ObiNumer 
                                         where Twr_Archiwalny = 0 and Twr_Gidnumer = @gidnumer";
 
                 string connectionString = ConfigurationManager.ConnectionStrings["GaskaConnectionString"].ConnectionString;

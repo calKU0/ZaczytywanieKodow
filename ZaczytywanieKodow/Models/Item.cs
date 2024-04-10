@@ -15,7 +15,6 @@ namespace ZaczytywanieKodow.Models
         public string KodDostawcy { get; set; }
         public string KodOem { get; set; }
         public string CenaZakupu { get; set; }
-        public string Grupa6 { get; set; }
         public string Zastosowanie { get; set; }
         public List<string> Dostawca { get; set; }
         public List<decimal> OstatniaCenaZakupu { get; set; }
