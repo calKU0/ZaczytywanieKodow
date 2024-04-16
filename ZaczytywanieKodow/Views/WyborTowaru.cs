@@ -140,6 +140,10 @@ namespace ZaczytywanieKodow
                 {
                     MessageBox.Show("Błąd wybierania karty towarowej", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+                if (GIDNumer == 0)
+                {
+                    return;
+                }
                 else
                 {
                     Dictionary<string,string> daneTowaru = Excel.PobierzDaneTowaru(GIDNumer);

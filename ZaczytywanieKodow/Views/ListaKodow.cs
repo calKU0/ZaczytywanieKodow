@@ -39,6 +39,8 @@ namespace ZaczytywanieKodow
                 xlLoginInfo.Winieta = -1;
                 xlLoginInfo.Wersja = APIVersion;
                 xlLoginInfo.Baza = ConfigurationManager.AppSettings["XLBaza"];
+                xlLoginInfo.OpeIdent = ConfigurationManager.AppSettings["XLLogin"];
+                xlLoginInfo.OpeHaslo = ConfigurationManager.AppSettings["XLHas³o"];
                 Int32 wynik = cdn_api.cdn_api.XLLogin(xlLoginInfo, ref IDSesjiXL);
 
                 if (wynik != 0)
@@ -101,12 +103,6 @@ namespace ZaczytywanieKodow
             plikExcel.CheckPathExists = true;
             plikExcel.ShowDialog();
             nazwaPlikuTextBox.Text = plikExcel.FileName;
-
-            WybierzKontrahenta();
-            if (kontrahentGidNumer == 0)
-            {
-                MessageBox.Show("Musisz wybraæ kontrahenta");
-            }
 
             if (nazwaPlikuTextBox.Text != string.Empty) { ZaczytajButton.Enabled = true; WyczyscButton.Enabled = true; }
         }
@@ -216,36 +212,38 @@ namespace ZaczytywanieKodow
                         grouppedItem.PolaczoneKody = item.PolaczoneKody;
                         grouppedItem.Zastosowanie = item.PolaczoneZastosowanie;
                         grouppedItem.KodSystem = items
-                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody && !item.TwrGidNumer.Any(x => x.Equals(0)))
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody)
                                      .SelectMany(i => i.KodSystem)
                                      .ToList();
                         grouppedItem.Nazwa = items
-                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody && !item.TwrGidNumer.Any(x => x.Equals(0)))
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody)
                                      .SelectMany(i => i.Nazwa)
                                      .ToList();
                         grouppedItem.TwrGidNumer = items
-                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody && !item.TwrGidNumer.Any(x => x.Equals(0)))
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody)
                                      .SelectMany(i => i.TwrGidNumer)
                                      .ToList();
                         grouppedItem.Dostawca= items
-                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody && !item.TwrGidNumer.Any(x => x.Equals(0)))
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody)
                                      .SelectMany(i => i.Dostawca)
                                      .ToList();
                         grouppedItem.OstatniaCenaZakupu = items
-                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody && !item.TwrGidNumer.Any(x => x.Equals(0)))
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody)
                                      .SelectMany(i => i.OstatniaCenaZakupu)
                                      .ToList();
                         grouppedItem.Waluta = items
-                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody && !item.TwrGidNumer.Any(x => x.Equals(0)))
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody)
                                      .SelectMany(i => i.Waluta)
                                      .ToList();
                         grouppedItem.Wyszukiwania = items
-                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody && !item.TwrGidNumer.Any(x => x.Equals(0)))
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody)
                                      .Sum(i => i.Wyszukiwania);
 
+                        grouppedItems.Add(grouppedItem);
+                        index += 1;
+                        uniqueKodDostawcy.Add(item.KodDostawcy);
 
-                        if (grouppedItem.KodSystem.Count() == 0) { grouppedItem.KodSystem.Add(""); grouppedItem.Nazwa.Add(""); grouppedItem.TwrGidNumer.Add(0); grouppedItem.Dostawca.Add(""); grouppedItem.OstatniaCenaZakupu.Add(Convert.ToDecimal(0.00)); grouppedItem.Waluta.Add(""); }
-                        if (grouppedItem.TwrGidNumer.Count() > 1)
+                        if (grouppedItem.TwrGidNumer.Count() >= 1)
                         {
                             grouppedItem.WieleKodow = true;
                             int indexList = grouppedItem.TwrGidNumer.FindIndex(x => x.Equals(0));
@@ -264,17 +262,21 @@ namespace ZaczytywanieKodow
                         {
                             grouppedItem.WieleKodow = false;
                         }
-
-                        grouppedItems.Add(grouppedItem);
-                        index += 1;
-                        uniqueKodDostawcy.Add(item.KodDostawcy);
-                        
                     }
                 }
 
-                foreach( var grouppedItem in grouppedItems )
+                grouppedItems = grouppedItems.OrderByDescending(x => x.Wyszukiwania).ToList();
+                foreach (var grouppedItem in grouppedItems)
                 {
                     index = kodyLista.Rows.Add(0, "Wybierz kartê", String.Empty, grouppedItem.KodDostawcy, String.Empty, grouppedItem.CenaZakupu, 0.00.ToString("0.00"), "", grouppedItem.PolaczoneKody, grouppedItem.Zastosowanie, grouppedItem.Wyszukiwania, "szczegó³y");
+                    grouppedItem.Id = index;
+                    if (grouppedItem.TwrGidNumer.Count() >= 1)
+                    {
+                        kodyLista.Rows[index].Cells["kodSystem"].Style.ForeColor = Color.MediumVioletRed;
+                        kodyLista.Rows[index].Cells["kodSystem"].Style.BackColor = Color.MediumVioletRed;
+                        kodyLista.Rows[index].Cells["kodSystem"].Style.SelectionBackColor = Color.MediumVioletRed;
+                        kodyLista.Rows[index].Cells["kodSystem"].Style.SelectionForeColor = Color.MediumVioletRed;
+                    }
                 }
                 foreach (DataGridViewRow dr in this.kodyLista.Rows)
                 {
@@ -282,8 +284,7 @@ namespace ZaczytywanieKodow
                     {
                         DataGridViewTextBoxCell szczegolyTxtCell = new DataGridViewTextBoxCell();
                         dr.Cells["szczegoly"] = szczegolyTxtCell;
-                    }
-                    
+                    }        
                 }
 
                 this.smoothProgressBar1.Value = this.smoothProgressBar1.Maximum;
@@ -340,7 +341,6 @@ namespace ZaczytywanieKodow
                     && kodyLista.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString() != "Za³ó¿ kartê")
                 {
                     var item = grouppedItems.Where((GrouppedItem arg) => arg.Id == e.RowIndex).FirstOrDefault();
-
                     using (var forma = new WyborTowaru(item, APIVersion))
                     {
                         var result = forma.ShowDialog();
@@ -465,42 +465,6 @@ namespace ZaczytywanieKodow
                 return;
             }
             Wyczysc();
-        }
-
-        private void WybierzKontrahenta()
-        {
-            try
-            {
-                XLGIDGrupaInfo_20231 XLGIDGrupaInfo = new XLGIDGrupaInfo_20231();
-                XLGIDGrupaInfo.Wersja = APIVersion;
-                XLGIDGrupaInfo.GIDTyp = 32;
-                XLGIDGrupaInfo.GIDNumer = -1;
-                XLGIDGrupaInfo.GIDLp = 0;
-                XLGIDGrupaInfo.GIDFirma = 449892;
-
-                int wynik = cdn_api.cdn_api.XLUruchomFormatkeWgGID(XLGIDGrupaInfo);
-
-                if (wynik == 0)
-                {
-                    kontrahentGidNumer = XLGIDGrupaInfo.GIDNumer;
-                    kontrahentGidTyp = XLGIDGrupaInfo.GIDTyp;
-                    kontrahentAkronim = Excel.ZwrocAkronimKontrahenta(kontrahentGidNumer);
-                    dstTextBox.Text = kontrahentAkronim;
-                }
-                else
-                {
-                    MessageBox.Show("B³¹d w kontrahentach: " + wynik.ToString(), this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("B³¹d w kontrahentach: " + ex.ToString());
-            }
-        }
-
-        private void dstTextBox_Click(object sender, EventArgs e)
-        {
-            WybierzKontrahenta();
         }
     }
 }

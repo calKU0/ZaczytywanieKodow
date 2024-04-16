@@ -34,7 +34,7 @@ namespace ZaczytywanieKodow
             try
             {
                 xlApp = new excel.Application();
-                plikExcel = xlApp.Workbooks.Open(nazwaPliku, 0, true, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+                plikExcel = xlApp.Workbooks.Open(nazwaPliku, 0, false, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", true, false, 0, false, 1, 0);
                 arkusz = (excel.Worksheet)plikExcel.Worksheets.get_Item(1);
                 range = arkusz.UsedRange;
                 czyPlikOtwarty = true;
@@ -132,7 +132,9 @@ namespace ZaczytywanieKodow
 		                                    where zakupowe.TowarGidNumer = Twr_GIDNumer
 		                                    order by zakupowe.DataWystawienia desc, zakupowe.DokumentGidNumer desc
 	                                    ),'') as waluta
-	                                    from (SELECT count(R_twr_twrid) as wyszukiwania FROM [serwer-sql].[nowe_b2b].[ldd].[RptTowary] with (nolock) where r_twr_Zapytanie = '" + item.KodOem + @"') podzapytanie
+	                                    from (SELECT count(distinct R_SRC_KntID) as wyszukiwania FROM [serwer-sql].[nowe_b2b].[ldd].[RptWyszukiwanie] with (nolock) 
+                                        where R_SRC_Zapytanie = '" + item.KodOem + @"'
+                                        and convert(date,R_SRC_Data) between convert(date,getdate()-730) and convert(date,getdate())) podzapytanie
 
 	                                    left join cdn.twrAplikacjeOpisy with (nolock) on TPO_OpisKrotki like '%" + item.KodOem + @"%'
 	                                    left join cdn.twrkarty with (nolock) on Twr_GIDTyp=TPO_ObiTyp AND Twr_GIDNumer=TPO_ObiNumer and Twr_Archiwalny = 0
@@ -193,8 +195,10 @@ namespace ZaczytywanieKodow
 		                                    where zakupowe.TowarGidNumer = Twr_GIDNumer
 		                                    order by zakupowe.DataWystawienia desc, zakupowe.DokumentGidNumer desc
 	                                    ),'') as waluta
-	                                    from (SELECT count(R_twr_twrid) as wyszukiwania FROM [serwer-sql].[nowe_b2b].[ldd].[RptTowary] with (nolock) where r_twr_Zapytanie = '" + item.KodOem + @"') podzapytanie
-	                                    join dbo.TwrKodyOem with (nolock) on TKO_Oem = '" + item.KodOem + @"'
+	                                    from (SELECT count(distinct R_SRC_KntID) as wyszukiwania FROM [serwer-sql].[nowe_b2b].[ldd].[RptWyszukiwanie] with (nolock) 
+                                        where R_SRC_Zapytanie = '" + item.KodOem + @"'
+                                        and convert(date,R_SRC_Data) between convert(date,getdate()-730) and convert(date,getdate())) podzapytanie
+	                                    join dbo.TwrKodyOem with (nolock) on TKO_Oem like '%" + item.KodOem + @"%'
 	                                    join cdn.twrkarty with (nolock) on Twr_GIDTyp=16 AND Twr_GIDNumer=TKO_TwrNumer and Twr_Archiwalny = 0
                                     END";
 
@@ -250,15 +254,8 @@ namespace ZaczytywanieKodow
                             left join cdn.KNTOSoby with (nolock) on R_twr_KntID=KnS_KntNumer and R_twr_KntLP=KnS_KntLp
 
 	                        WHERE
-                            R_twr_twrid = @TwrGidNumer AND r_TWR_stan=0 AND twr_archiwalny=0 AND Twr_WCenniku=1
-	                        AND R_TWR_twrID not in (select tre_twrNumer from cdn.TraElem  with (nolock) where convert(datetime, Dateadd(Second, Tre_TrnTStamp, '1990-01-01')) > getdate()-365 )
-	                        AND R_TWR_twrID not in (select ZaE_TwrNumer 
-                                                    from cdn.ZamElem  with (nolock) 
-                                                    join cdn.ZamNag  with (nolock) on  ZaN_GIDNumer=ZaE_GIDNumer 
-	                                                where 
-	                                                zan_stan<>2
-	                                                AND ZaN_ZamTyp=1152
-	                                                AND convert(datetime, Dateadd(DAY, ZaE_DataAktywacjiRez, '18001228')) > getdate()-365)
+                            R_twr_twrid = @TwrGidNumer AND twr_archiwalny=0 AND Twr_WCenniku=1
+	                        AND r_twr_data>=getdate()-360
 
                             group by twr_kod, twr_nazwa, ostatni_dostawca, KNT_Akronim ,Kns_Nazwa, r_twr_data, R_TWR_Zapytanie
                             order by r_twr_data desc";
