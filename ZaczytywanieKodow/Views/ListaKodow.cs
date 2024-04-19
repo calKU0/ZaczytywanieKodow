@@ -27,7 +27,7 @@ namespace ZaczytywanieKodow
         public ListaKodow()
         {
             InitializeComponent();
-            kodyLista.Columns.AddRange(new DataGridViewColumn[] { twrGidNumer, kodSystem, nazwa, kodDostawcy, dostawca, cena, ostCenaZak, waluta, polaczoneNumery, zastosowanie, wyszukiwania, szczegoly });
+            kodyLista.Columns.AddRange(new DataGridViewColumn[] { twrGidNumer, kodSystem, nazwa, kodDostawcy, dostawca, cena, ostCenaZak, waluta, polaczoneNumery, zastosowanie, wyszukiwania, uwagi, szczegoly });
         }
 
         public void ListaKodow_Load(object sender, EventArgs e)
@@ -268,7 +268,7 @@ namespace ZaczytywanieKodow
                 grouppedItems = grouppedItems.OrderByDescending(x => x.Wyszukiwania).ToList();
                 foreach (var grouppedItem in grouppedItems)
                 {
-                    index = kodyLista.Rows.Add(0, "Wybierz kartê", String.Empty, grouppedItem.KodDostawcy, String.Empty, grouppedItem.CenaZakupu, 0.00.ToString("0.00"), "", grouppedItem.PolaczoneKody, grouppedItem.Zastosowanie, grouppedItem.Wyszukiwania, "szczegó³y");
+                    index = kodyLista.Rows.Add(0, "Wybierz kartê", String.Empty, grouppedItem.KodDostawcy, String.Empty, grouppedItem.CenaZakupu, 0.00.ToString("0.00"), "", grouppedItem.PolaczoneKody, grouppedItem.Zastosowanie, grouppedItem.Wyszukiwania, String.Empty, "szczegó³y");
                     grouppedItem.Id = index;
                     if (grouppedItem.TwrGidNumer.Count() >= 1)
                     {

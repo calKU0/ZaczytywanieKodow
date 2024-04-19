@@ -70,13 +70,15 @@ namespace ZaczytywanieKodow
             {
                 if (czyPlikOtwarty == true)
                 {
-                    item.KodDostawcy = ((excel.Range)range.Cells[numerWiersza, 1]).FormulaR1C1Local.ToString() ?? "";
-                    item.KodOem = ((excel.Range)range.Cells[numerWiersza, 2]).FormulaR1C1Local.ToString() ?? "";
-                    item.CenaZakupu = ((excel.Range)range.Cells[numerWiersza, 3]).FormulaR1C1Local.ToString() ?? "";
-                    item.Zastosowanie = ((excel.Range)range.Cells[numerWiersza, 4]).FormulaR1C1Local.ToString() ?? "";
-                    if (item.KodDostawcy == "") { return item; }
+                    item.KodDostawcy = ((excel.Range)range.Cells[numerWiersza, 1]).FormulaR1C1Local.ToString().Trim() ?? "";
+                    item.KodOem = ((excel.Range)range.Cells[numerWiersza, 2]).FormulaR1C1Local.ToString().Trim() ?? "";
+                    item.CenaZakupu = ((excel.Range)range.Cells[numerWiersza, 3]).FormulaR1C1Local.ToString().Trim() ?? "";
+                    item.Zastosowanie = ((excel.Range)range.Cells[numerWiersza, 4]).FormulaR1C1Local.ToString().Trim() ?? "";
+                    item.KodOem = item.KodOem.Replace("\n", "");
+                    item.KodOem = item.KodOem.Replace("\t", "");
+                    if (item.KodDostawcy == "" || item.KodOem == "") { return item; }
 
-                    string query = @"IF NOT EXISTS (SELECT TKO_GIDNumer FROM dbo.TwrKodyOem where TKO_Oem = '" + item.KodOem + @"')
+                    string query = $@"IF NOT EXISTS (SELECT TKO_GIDNumer FROM dbo.TwrKodyOem where TKO_Oem = '{item.KodOem}')
                                     BEGIN
 	                                    SELECT distinct isnull(twr_gidnumer,0) as twrGidNumer
 	                                    ,isnull(twr_kod,'') as twrKod
@@ -133,11 +135,10 @@ namespace ZaczytywanieKodow
 		                                    order by zakupowe.DataWystawienia desc, zakupowe.DokumentGidNumer desc
 	                                    ),'') as waluta
 	                                    from (SELECT count(distinct R_SRC_KntID) as wyszukiwania FROM [serwer-sql].[nowe_b2b].[ldd].[RptWyszukiwanie] with (nolock) 
-                                        where R_SRC_Zapytanie = '" + item.KodOem + @"'
+                                        where R_SRC_Zapytanie = '{item.KodOem}'
                                         and convert(date,R_SRC_Data) between convert(date,getdate()-730) and convert(date,getdate())) podzapytanie
-
-	                                    left join cdn.twrAplikacjeOpisy with (nolock) on TPO_OpisKrotki like '%" + item.KodOem + @"%'
-	                                    left join cdn.twrkarty with (nolock) on Twr_GIDTyp=TPO_ObiTyp AND Twr_GIDNumer=TPO_ObiNumer and Twr_Archiwalny = 0
+	                                    left join cdn.OEM with (nolock) on OEM like '%{item.KodOem}%'
+	                                    left join cdn.twrkarty with (nolock) on (Twr_GIDNumer=ID and Twr_Archiwalny = 0)
                                     END
                                     ELSE
                                     BEGIN
@@ -196,12 +197,11 @@ namespace ZaczytywanieKodow
 		                                    order by zakupowe.DataWystawienia desc, zakupowe.DokumentGidNumer desc
 	                                    ),'') as waluta
 	                                    from (SELECT count(distinct R_SRC_KntID) as wyszukiwania FROM [serwer-sql].[nowe_b2b].[ldd].[RptWyszukiwanie] with (nolock) 
-                                        where R_SRC_Zapytanie = '" + item.KodOem + @"'
+                                        where R_SRC_Zapytanie = '{item.KodOem}'
                                         and convert(date,R_SRC_Data) between convert(date,getdate()-730) and convert(date,getdate())) podzapytanie
-	                                    join dbo.TwrKodyOem with (nolock) on TKO_Oem like '%" + item.KodOem + @"%'
+	                                    join dbo.TwrKodyOem with (nolock) on TKO_Oem like '%{item.KodOem}%'
 	                                    join cdn.twrkarty with (nolock) on Twr_GIDTyp=16 AND Twr_GIDNumer=TKO_TwrNumer and Twr_Archiwalny = 0
                                     END";
-
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
