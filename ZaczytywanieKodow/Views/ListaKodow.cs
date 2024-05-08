@@ -294,6 +294,7 @@ namespace ZaczytywanieKodow
                 AnulujButton.Enabled = false;
                 WyczyscButton.Enabled = true;
                 WybierzPlikButton.Enabled = true;
+                deleteRowButton.Visible = true;
             }
             catch (Exception ex) { MessageBox.Show("Napotkano b³¹d przy próbie wyœwietlenia wyników" + ex, "B³¹d", MessageBoxButtons.OK, MessageBoxIcon.Error); }
             
@@ -340,7 +341,7 @@ namespace ZaczytywanieKodow
                     && e.RowIndex >= 0 
                     && kodyLista.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString() != "Za³ó¿ kartê")
                 {
-                    var item = grouppedItems.Where((GrouppedItem arg) => arg.Id == e.RowIndex).FirstOrDefault();
+                    var item = grouppedItems.Where(i => i.PolaczoneKody == kodyLista.Rows[e.RowIndex].Cells["polaczoneNumery"].Value.ToString()).FirstOrDefault();
                     using (var forma = new WyborTowaru(item, APIVersion))
                     {
                         var result = forma.ShowDialog();
@@ -465,6 +466,17 @@ namespace ZaczytywanieKodow
                 return;
             }
             Wyczysc();
+        }
+
+        private void DeleteRowButton_Click(object sender, EventArgs e)
+        {
+            if (kodyLista.CurrentCell.RowIndex < 0)
+            {
+                MessageBox.Show("Nie zaznaczono ¿adnego wiersza\nZaznacz wiersz i spróbuj ponownie", "Informacja", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            kodyLista.Rows.RemoveAt(kodyLista.CurrentCell.RowIndex);
         }
     }
 }

@@ -59,6 +59,7 @@ namespace ZaczytywanieKodow
             this.ZaczytajButton = new System.Windows.Forms.Button();
             this.WybierzPlikButton = new System.Windows.Forms.Button();
             this.WyczyscButton = new System.Windows.Forms.Button();
+            this.deleteRowButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.kodyLista)).BeginInit();
             this.SuspendLayout();
             // 
@@ -207,8 +208,8 @@ namespace ZaczytywanieKodow
             this.polaczoneNumery.HeaderText = "Połączone Numery OEM";
             this.polaczoneNumery.Name = "polaczoneNumery";
             this.polaczoneNumery.ReadOnly = true;
-            this.polaczoneNumery.Width = 240;
             this.polaczoneNumery.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.polaczoneNumery.Width = 240;
             // 
             // uwagi
             // 
@@ -331,6 +332,22 @@ namespace ZaczytywanieKodow
             this.WyczyscButton.UseVisualStyleBackColor = false;
             this.WyczyscButton.Click += new System.EventHandler(this.WyczyscButton_Click);
             // 
+            // deleteRowButton
+            // 
+            this.deleteRowButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.deleteRowButton.BackColor = System.Drawing.SystemColors.Control;
+            this.deleteRowButton.Visible = false;
+            this.deleteRowButton.Font = new System.Drawing.Font("Montserrat", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.deleteRowButton.Image = global::ZaczytywanieKodow.Properties.Resources.trash_bin;
+            this.deleteRowButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.deleteRowButton.Location = new System.Drawing.Point(1466, 581);
+            this.deleteRowButton.Name = "deleteRowButton";
+            this.deleteRowButton.Size = new System.Drawing.Size(186, 55);
+            this.deleteRowButton.TabIndex = 2;
+            this.deleteRowButton.Text = "       Usuń wiersz";
+            this.deleteRowButton.UseVisualStyleBackColor = false;
+            this.deleteRowButton.Click += new System.EventHandler(this.DeleteRowButton_Click);
+            // 
             // ListaKodow
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
@@ -343,6 +360,7 @@ namespace ZaczytywanieKodow
             this.Controls.Add(this.smoothProgressBar1);
             this.Controls.Add(this.kodyLista);
             this.Controls.Add(this.AnulujButton);
+            this.Controls.Add(this.deleteRowButton);
             this.Controls.Add(this.WyczyscButton);
             this.Controls.Add(this.ZaczytajButton);
             this.Controls.Add(this.nazwaPlikuTextBox);
@@ -385,5 +403,6 @@ namespace ZaczytywanieKodow
         private TextBox textBox3;
         private Button AnulujButton;
         private Button WyczyscButton;
+        private Button deleteRowButton;
     }
 }
