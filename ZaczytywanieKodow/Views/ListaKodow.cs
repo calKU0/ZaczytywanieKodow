@@ -477,6 +477,7 @@ namespace ZaczytywanieKodow
             }
 
             kodyLista.Rows.RemoveAt(kodyLista.CurrentCell.RowIndex);
+            grouppedItems.RemoveAt(kodyLista.CurrentCell.RowIndex);
         }
     }
 }
