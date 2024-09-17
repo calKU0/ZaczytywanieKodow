@@ -31,9 +31,9 @@ namespace ZaczytywanieKodow
         /// </summary>
         private void InitializeComponent()
         { 
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ListaKodow));
             this.nazwaPlikuTextBox = new System.Windows.Forms.TextBox();
             this.kodyLista = new System.Windows.Forms.DataGridView();
@@ -44,6 +44,7 @@ namespace ZaczytywanieKodow
             this.kodOem = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dostawca = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cena = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.stan = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ostCenaZak = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.waluta = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.zastosowanie = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -80,33 +81,33 @@ namespace ZaczytywanieKodow
             this.kodyLista.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Montserrat Medium", 8.999999F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.kodyLista.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Montserrat Medium", 8.999999F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.kodyLista.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.kodyLista.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Montserrat", 9.749999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.kodyLista.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Montserrat", 9.749999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.kodyLista.DefaultCellStyle = dataGridViewCellStyle5;
             this.kodyLista.Location = new System.Drawing.Point(12, 87);
             this.kodyLista.Name = "kodyLista";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Montserrat", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.kodyLista.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Montserrat", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.kodyLista.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.kodyLista.RowHeadersVisible = false;
             this.kodyLista.RowTemplate.Height = 25;
             this.kodyLista.Size = new System.Drawing.Size(1423, 848);
@@ -162,6 +163,14 @@ namespace ZaczytywanieKodow
             this.dostawca.Name = "dostawca";
             this.dostawca.ReadOnly = true;
             this.dostawca.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // stan
+            // 
+            this.stan.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.stan.HeaderText = "Stan";
+            this.stan.Name = "stan";
+            this.stan.ReadOnly = true;
+            this.stan.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // cena
             // 
@@ -227,6 +236,7 @@ namespace ZaczytywanieKodow
             // 
             // smoothProgressBar1
             // 
+            this.smoothProgressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.smoothProgressBar1.Location = new System.Drawing.Point(718, 10);
             this.smoothProgressBar1.Maximum = 100;
             this.smoothProgressBar1.Minimum = 0;
@@ -239,6 +249,7 @@ namespace ZaczytywanieKodow
             // 
             // textBox1
             // 
+            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox1.Font = new System.Drawing.Font("Montserrat", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.textBox1.Location = new System.Drawing.Point(1233, 10);
@@ -251,6 +262,7 @@ namespace ZaczytywanieKodow
             // 
             // textBox2
             // 
+            this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox2.Font = new System.Drawing.Font("Montserrat", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.textBox2.Location = new System.Drawing.Point(1409, 11);
@@ -336,7 +348,6 @@ namespace ZaczytywanieKodow
             // 
             this.deleteRowButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.deleteRowButton.BackColor = System.Drawing.SystemColors.Control;
-            this.deleteRowButton.Visible = false;
             this.deleteRowButton.Font = new System.Drawing.Font("Montserrat", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.deleteRowButton.Image = global::ZaczytywanieKodow.Properties.Resources.trash_bin;
             this.deleteRowButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -346,6 +357,7 @@ namespace ZaczytywanieKodow
             this.deleteRowButton.TabIndex = 2;
             this.deleteRowButton.Text = "       Usuń wiersz";
             this.deleteRowButton.UseVisualStyleBackColor = false;
+            this.deleteRowButton.Visible = false;
             this.deleteRowButton.Click += new System.EventHandler(this.DeleteRowButton_Click);
             // 
             // ListaKodow
@@ -390,6 +402,7 @@ namespace ZaczytywanieKodow
         private DataGridViewTextBoxColumn kodOem;
         private DataGridViewTextBoxColumn dostawca;
         private DataGridViewTextBoxColumn cena;
+        private DataGridViewTextBoxColumn stan;
         private DataGridViewTextBoxColumn ostCenaZak;
         private DataGridViewTextBoxColumn waluta;
         private DataGridViewTextBoxColumn zastosowanie;

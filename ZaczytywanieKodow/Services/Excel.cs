@@ -9,6 +9,7 @@ using System.Data;
 using excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ZaczytywanieKodow
 {
@@ -78,11 +79,11 @@ namespace ZaczytywanieKodow
                     item.KodOem = item.KodOem.Replace("\t", "");
                     if (item.KodDostawcy == "" || item.KodOem == "") { return item; }
 
-                    string query = $@"IF NOT EXISTS (SELECT TKO_GIDNumer FROM dbo.TwrKodyOem where TKO_Oem = '{item.KodOem}')
-                                    BEGIN
+                    string query = $@"
 	                                    SELECT distinct isnull(twr_gidnumer,0) as twrGidNumer
 	                                    ,isnull(twr_kod,'') as twrKod
                                         ,isnull(twr_nazwa,'') as twrNazwa
+                                        ,isnull((select convert(int,round(sum(TwZ_IlMag),0)) from cdn.TwrZasoby where Twr_GIDNumer = TwZ_TwrNumer and TwZ_MagNumer = 1),0) as [stan]
 	                                    ,isnull((select top 1 isnull(knt_akronim,'') from cdn.twrdost with (nolock) join cdn.kntkarty with (nolock) on knt_gidnumer = twd_kntnumer where Twr_GIDNumer=TWD_TwrNumer and TWD_KlasaKnt = 8),'') as kntAkronim
 	                                    ,podzapytanie.wyszukiwania as wyszukiwania
                                         ,isnull((select top 1 zakupowe.Cena from(
@@ -137,14 +138,13 @@ namespace ZaczytywanieKodow
 	                                    from (SELECT count(distinct R_SRC_KntID) as wyszukiwania FROM [serwer-sql].[nowe_b2b].[ldd].[RptWyszukiwanie] with (nolock) 
                                         where R_SRC_Zapytanie = '{item.KodOem}'
                                         and convert(date,R_SRC_Data) between convert(date,getdate()-730) and convert(date,getdate())) podzapytanie
-	                                    left join cdn.OEM with (nolock) on OEM like '%{item.KodOem}%'
-	                                    left join cdn.twrkarty with (nolock) on (Twr_GIDNumer=ID and Twr_Archiwalny = 0)
-                                    END
-                                    ELSE
-                                    BEGIN
+                                        join cdn.TwrAplikacjeOpisy with (nolock) on TPO_OpisKrotki like '%{item.KodOem}%'
+                                        join cdn.twrkarty with (nolock) on (Twr_GIDNumer=TPO_ObiNumer and Twr_Archiwalny = 0)
+                                    UNION
 	                                    SELECT distinct isnull(twr_gidnumer,0) as twrGidNumer
 	                                    ,isnull(twr_kod,'') as twrKod
                                         ,isnull(twr_nazwa,'') as twrNazwa
+                                        ,isnull((select convert(int,round(sum(TwZ_IlMag),0)) from cdn.TwrZasoby where Twr_GIDNumer = TwZ_TwrNumer and TwZ_MagNumer = 1),0) as [stan]
 	                                    ,isnull((select top 1 knt_akronim from cdn.twrdost with (nolock) join cdn.kntkarty with (nolock) on knt_gidnumer = twd_kntnumer where Twr_GIDNumer=TWD_TwrNumer and TWD_KlasaKnt = 8),'') as kntAkronim
 	                                    ,podzapytanie.wyszukiwania as wyszukiwania
                                         ,isnull((select top 1 zakupowe.Cena from(
@@ -199,9 +199,8 @@ namespace ZaczytywanieKodow
 	                                    from (SELECT count(distinct R_SRC_KntID) as wyszukiwania FROM [serwer-sql].[nowe_b2b].[ldd].[RptWyszukiwanie] with (nolock) 
                                         where R_SRC_Zapytanie = '{item.KodOem}'
                                         and convert(date,R_SRC_Data) between convert(date,getdate()-730) and convert(date,getdate())) podzapytanie
-	                                    join dbo.TwrKodyOem with (nolock) on TKO_Oem like '%{item.KodOem}%'
-	                                    join cdn.twrkarty with (nolock) on Twr_GIDTyp=16 AND Twr_GIDNumer=TKO_TwrNumer and Twr_Archiwalny = 0
-                                    END";
+	                                    left join dbo.TwrKodyOem with (nolock) on TKO_Oem like '%{item.KodOem}%'
+	                                    left join cdn.twrkarty with (nolock) on Twr_GIDTyp=16 AND Twr_GIDNumer=TKO_TwrNumer and Twr_Archiwalny = 0";
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
@@ -212,7 +211,7 @@ namespace ZaczytywanieKodow
                             if (dr.HasRows)
                             {
                                 while (dr.Read())
-                                {
+                                {   
                                     item.TwrGidNumer.Add((int)dr["twrGidNumer"]);
                                     item.KodSystem.Add((string)dr["twrKod"]);
                                     item.Nazwa.Add((string)dr["twrNazwa"]);
@@ -220,6 +219,7 @@ namespace ZaczytywanieKodow
                                     item.Wyszukiwania = (int)dr["wyszukiwania"];
                                     item.OstatniaCenaZakupu.Add((decimal)dr["ostCena"]);
                                     item.Waluta.Add((string)dr["waluta"]);
+                                    item.Stan.Add((int)dr["stan"]);
                                 }
                             }
                             else { item.KodSystem.Add(""); }
@@ -243,8 +243,8 @@ namespace ZaczytywanieKodow
                             ,R_TWR_Zapytanie as [Szukany ciąg]
                             ,KNT_Akronim as [Klient]
                             ,Kns_Nazwa as [Osoba]
-                            ,count(TWr_kod) as [Ilośc kliknięć]
                             ,r_twr_data as [Data]
+                            ,count(TWr_kod) as [Ilośc kliknięć]
 
 
                             FROM [serwer-sql].[nowe_b2b].[ldd].[RptTowary] with (nolock)
@@ -303,6 +303,7 @@ namespace ZaczytywanieKodow
                 string select = @"SELECT distinct isnull(twr_gidnumer,0) as twrGidNumer
 	                                    ,isnull(twr_kod,'') as twrKod
                                         ,isnull(twr_nazwa,'') as twrNazwa
+                                        ,isnull((select convert(int,round(sum(TwZ_IlMag),0)) from cdn.TwrZasoby where Twr_GIDNumer = TwZ_TwrNumer and TwZ_MagNumer = 1),0) as [stan]
 	                                    ,isnull((select top 1 isnull(knt_akronim,'') from cdn.twrdost with (nolock) join cdn.kntkarty with (nolock) on knt_gidnumer = twd_kntnumer where Twr_GIDNumer=TWD_TwrNumer and TWD_KlasaKnt = 8),'') as kntAkronim
                                         ,isnull((select top 1 zakupowe.Cena from(
 											select ImE_Cena as [Cena]
@@ -371,6 +372,7 @@ namespace ZaczytywanieKodow
                             result.Add("kntAkronim", reader["kntAkronim"].ToString());
                             result.Add("ostCena", reader["ostCena"].ToString());
                             result.Add("waluta", reader["waluta"].ToString());
+                            result.Add("stan", reader["stan"].ToString());
                         }
                     }
                 }

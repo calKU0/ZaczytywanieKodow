@@ -16,7 +16,7 @@ namespace ZaczytywanieKodow
 {
     public partial class ListaKodow : Form
     {
-        private List<Item> items { get; set; } = new List<Item>();
+        public static List<Item> items { get; set; } = new List<Item>();
         private bool stop;
         private List<GrouppedItem> grouppedItems { get; set; } = new List<GrouppedItem>();
         public static readonly int APIVersion = 20231;
@@ -27,7 +27,7 @@ namespace ZaczytywanieKodow
         public ListaKodow()
         {
             InitializeComponent();
-            kodyLista.Columns.AddRange(new DataGridViewColumn[] { twrGidNumer, kodSystem, nazwa, kodDostawcy, dostawca, cena, ostCenaZak, waluta, polaczoneNumery, zastosowanie, wyszukiwania, uwagi, szczegoly });
+            kodyLista.Columns.AddRange(new DataGridViewColumn[] { twrGidNumer, kodSystem, nazwa, kodDostawcy, dostawca, stan, cena, ostCenaZak, waluta, polaczoneNumery, zastosowanie, wyszukiwania, uwagi, szczegoly });
         }
 
         public void ListaKodow_Load(object sender, EventArgs e)
@@ -145,7 +145,7 @@ namespace ZaczytywanieKodow
                         sw = Stopwatch.StartNew();
 
                         Item item = plik.CzytajWiersz(i);
-                        if (item.KodDostawcy == "" || stop) { iloscWierszy = i - 2; plik.Zamknij(); return; }
+                        if (item.KodDostawcy == "" || stop) { iloscWierszy = i - 2; plik.Zamknij(); break; }
                         items.Add(item);
 
                         this.smoothProgressBar1.Value++;
@@ -181,7 +181,7 @@ namespace ZaczytywanieKodow
                 .Select(group =>
                 {
                     string kodDostawcy = group.Key;
-                    string combinedOem = string.Join(", ", group.Select(item => item.KodOem));
+                    string combinedOem = string.Join(", ", group.Select(item => item.KodOem).Distinct());
                     string zastosowanie = string.Join(", ", group.Select(item => item.Zastosowanie).Distinct());
                     return new Item { KodDostawcy = kodDostawcy, PolaczoneKody = combinedOem, Zastosowanie = zastosowanie};
                 })
@@ -189,7 +189,7 @@ namespace ZaczytywanieKodow
 
                 foreach (var groupedItem in groupedData)
                 {
-                    var existingItems = items.Where(item => item.KodDostawcy == groupedItem.KodDostawcy);
+                    var existingItems = items.Where(item => item.KodDostawcy == groupedItem.KodDostawcy).Distinct();
 
                     foreach (var existingItem in existingItems)
                     {
@@ -214,6 +214,7 @@ namespace ZaczytywanieKodow
                         grouppedItem.KodSystem = items
                                      .Where(i => i.PolaczoneKody == item.PolaczoneKody)
                                      .SelectMany(i => i.KodSystem)
+                                     .Distinct()
                                      .ToList();
                         grouppedItem.Nazwa = items
                                      .Where(i => i.PolaczoneKody == item.PolaczoneKody)
@@ -222,10 +223,15 @@ namespace ZaczytywanieKodow
                         grouppedItem.TwrGidNumer = items
                                      .Where(i => i.PolaczoneKody == item.PolaczoneKody)
                                      .SelectMany(i => i.TwrGidNumer)
+                                     .Distinct()
                                      .ToList();
                         grouppedItem.Dostawca= items
                                      .Where(i => i.PolaczoneKody == item.PolaczoneKody)
                                      .SelectMany(i => i.Dostawca)
+                                     .ToList();
+                        grouppedItem.Stan = items
+                                     .Where(i => i.PolaczoneKody == item.PolaczoneKody)
+                                     .SelectMany(i => i.Stan)
                                      .ToList();
                         grouppedItem.OstatniaCenaZakupu = items
                                      .Where(i => i.PolaczoneKody == item.PolaczoneKody)
@@ -234,10 +240,13 @@ namespace ZaczytywanieKodow
                         grouppedItem.Waluta = items
                                      .Where(i => i.PolaczoneKody == item.PolaczoneKody)
                                      .SelectMany(i => i.Waluta)
+                                     .Distinct()
                                      .ToList();
                         grouppedItem.Wyszukiwania = items
                                      .Where(i => i.PolaczoneKody == item.PolaczoneKody)
-                                     .Sum(i => i.Wyszukiwania);
+                                     .Select(i => i.Wyszukiwania)
+                                     .Distinct()
+                                     .Sum();
 
                         grouppedItems.Add(grouppedItem);
                         index += 1;
@@ -254,6 +263,7 @@ namespace ZaczytywanieKodow
                                 grouppedItem.KodSystem.RemoveAt(indexList);
                                 grouppedItem.Dostawca.RemoveAt(indexList);
                                 grouppedItem.OstatniaCenaZakupu.RemoveAt(indexList);
+                                grouppedItem.Stan.RemoveAt(indexList);
                                 grouppedItem.Waluta.RemoveAt(indexList);
                                 indexList = grouppedItem.TwrGidNumer.FindIndex(x => x.Equals(0));
                             }
@@ -268,8 +278,17 @@ namespace ZaczytywanieKodow
                 grouppedItems = grouppedItems.OrderByDescending(x => x.Wyszukiwania).ToList();
                 foreach (var grouppedItem in grouppedItems)
                 {
-                    index = kodyLista.Rows.Add(0, "Wybierz kartê", String.Empty, grouppedItem.KodDostawcy, String.Empty, grouppedItem.CenaZakupu, 0.00.ToString("0.00"), "", grouppedItem.PolaczoneKody, grouppedItem.Zastosowanie, grouppedItem.Wyszukiwania, String.Empty, "szczegó³y");
-                    grouppedItem.Id = index;
+                    if (grouppedItem.TwrGidNumer.Count() == 1)
+                    {
+                        index = kodyLista.Rows.Add(grouppedItem.TwrGidNumer.FirstOrDefault(), grouppedItem.KodSystem.FirstOrDefault(), grouppedItem.Nazwa.FirstOrDefault(), grouppedItem.KodDostawcy, grouppedItem.Dostawca.FirstOrDefault(), grouppedItem.Stan.FirstOrDefault(), grouppedItem.CenaZakupu, grouppedItem.OstatniaCenaZakupu.FirstOrDefault(), grouppedItem.Waluta.FirstOrDefault(), grouppedItem.PolaczoneKody, grouppedItem.Zastosowanie, grouppedItem.Wyszukiwania, String.Empty, "szczegó³y");
+                        grouppedItem.Id = index;
+                    }
+                    else
+                    {
+                        index = kodyLista.Rows.Add(0, "Wybierz kartê", String.Empty, grouppedItem.KodDostawcy, String.Empty, 0.00, grouppedItem.CenaZakupu, 0.00.ToString("0.00"), "", grouppedItem.PolaczoneKody, grouppedItem.Zastosowanie, grouppedItem.Wyszukiwania, String.Empty, "szczegó³y");
+                        grouppedItem.Id = index;
+                    }
+
                     if (grouppedItem.TwrGidNumer.Count() >= 1)
                     {
                         kodyLista.Rows[index].Cells["kodSystem"].Style.ForeColor = Color.MediumVioletRed;
@@ -303,7 +322,6 @@ namespace ZaczytywanieKodow
         private void AnulujButton_Click(object sender, EventArgs e)
         {
             stop = true;
-            Wyczysc();
             MessageBox.Show("Zatrzymano zaczytywanie pliku", "Informacja", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -348,20 +366,56 @@ namespace ZaczytywanieKodow
 
                         if (result == DialogResult.OK) // jesli forma zwraca wynik
                         {
-                            string wybranyKod = forma.ReturnValue1;
-                            string nazwa = forma.ReturnValue2;
-                            string dostawca = forma.ReturnValue3;
-                            string twrGid = forma.ReturnValue4;
-                            string ostCenaZak = forma.ReturnValue5;
-                            string waluta = forma.ReturnValue6;
-                            grouppedItems[e.RowIndex] = forma.item;
+                            List<string> wybranyKod = forma.ReturnValue1;
+                            List<string> nazwa = forma.ReturnValue2;
+                            List<string> dostawca = forma.ReturnValue3;
+                            List<string> twrGid = forma.ReturnValue4;
+                            List<string> ostCenaZak = forma.ReturnValue5;
+                            List<string> waluta = forma.ReturnValue6;
+                            List<string> stan = forma.ReturnValue7;
 
-                            kodyLista.Rows[e.RowIndex].Cells["nazwa"].Value = nazwa;
-                            kodyLista.Rows[e.RowIndex].Cells["dostawca"].Value = dostawca;
-                            kodyLista.Rows[e.RowIndex].Cells["twrGidNumer"].Value = twrGid;
-                            kodyLista.Rows[e.RowIndex].Cells["ostCenaZak"].Value = ostCenaZak;
-                            kodyLista.Rows[e.RowIndex].Cells["waluta"].Value = waluta;
-                            kodyLista.Rows[e.RowIndex].Cells["kodSystem"].Style.BackColor = DefaultBackColor;
+                            if (wybranyKod.Count() > 1) 
+                            {
+                                grouppedItems[e.RowIndex] = forma.item;
+                                kodyLista.Rows[e.RowIndex].Cells["nazwa"].Value = nazwa.FirstOrDefault();
+                                kodyLista.Rows[e.RowIndex].Cells["dostawca"].Value = dostawca.FirstOrDefault();
+                                kodyLista.Rows[e.RowIndex].Cells["twrGidNumer"].Value = twrGid.FirstOrDefault();
+                                kodyLista.Rows[e.RowIndex].Cells["ostCenaZak"].Value = ostCenaZak.FirstOrDefault();
+                                kodyLista.Rows[e.RowIndex].Cells["waluta"].Value = waluta.FirstOrDefault();
+                                kodyLista.Rows[e.RowIndex].Cells["stan"].Value = stan.FirstOrDefault();
+                                kodyLista.Rows[e.RowIndex].Cells["kodSystem"].Style.BackColor = DefaultBackColor;
+
+                                for (int i = 1; i < wybranyKod.Count(); i++)
+                                {
+                                    grouppedItems.Add(forma.item);
+                                    int index = kodyLista.Rows.Add(twrGid[i], wybranyKod[i], nazwa[i], kodyLista.Rows[e.RowIndex].Cells["kodDostawcy"].Value, dostawca[i], stan[i], kodyLista.Rows[e.RowIndex].Cells["cena"].Value, ostCenaZak[i], waluta[i], kodyLista.Rows[e.RowIndex].Cells["polaczoneNumery"].Value, kodyLista.Rows[e.RowIndex].Cells["zastosowanie"].Value, kodyLista.Rows[e.RowIndex].Cells["wyszukiwania"].Value, String.Empty, "szczegó³y");
+                                    
+                                    DataGridViewButtonCell szczegolyButtonCell = new DataGridViewButtonCell();
+                                    szczegolyButtonCell.Value = "szczegó³y";
+                                    szczegolyButtonCell.Style = kodyLista.Columns["szczegoly"].DefaultCellStyle;
+                                    kodyLista.Rows[index].Cells["szczegoly"] = szczegolyButtonCell;
+
+                                    DataGridViewTextBoxCell kodSystemTxtCell = new DataGridViewTextBoxCell();
+                                    kodSystemTxtCell.Value = wybranyKod[i];
+                                    kodyLista.Rows[index].Cells["kodSystem"] = kodSystemTxtCell;
+                                }
+
+                                grouppedItems = grouppedItems.OrderByDescending(x => x.Wyszukiwania).ToList();
+                                kodyLista.Sort(kodyLista.Columns["wyszukiwania"], System.ComponentModel.ListSortDirection.Descending);
+                                kodyLista.Refresh();
+
+                            }
+                            else
+                            {
+                                grouppedItems[e.RowIndex] = forma.item;
+                                kodyLista.Rows[e.RowIndex].Cells["nazwa"].Value = nazwa.FirstOrDefault();
+                                kodyLista.Rows[e.RowIndex].Cells["dostawca"].Value = dostawca.FirstOrDefault();
+                                kodyLista.Rows[e.RowIndex].Cells["twrGidNumer"].Value = twrGid.FirstOrDefault();
+                                kodyLista.Rows[e.RowIndex].Cells["ostCenaZak"].Value = ostCenaZak.FirstOrDefault();
+                                kodyLista.Rows[e.RowIndex].Cells["waluta"].Value = waluta.FirstOrDefault();
+                                kodyLista.Rows[e.RowIndex].Cells["stan"].Value = stan.FirstOrDefault();
+                                kodyLista.Rows[e.RowIndex].Cells["kodSystem"].Style.BackColor = DefaultBackColor;
+                            }
 
                             if (kodyLista.Rows[e.RowIndex].Cells["twrGidNumer"].Value.ToString() == "0")
                             {
@@ -377,9 +431,10 @@ namespace ZaczytywanieKodow
                                 kodyLista.Rows[e.RowIndex].Cells["szczegoly"] = szczegolyButtonCell;
 
                                 DataGridViewTextBoxCell kodSystemTxtCell = new DataGridViewTextBoxCell();
-                                kodSystemTxtCell.Value = wybranyKod;
+                                kodSystemTxtCell.Value = wybranyKod.FirstOrDefault();
                                 kodyLista.Rows[e.RowIndex].Cells["kodSystem"] = kodSystemTxtCell;
                             }
+
                         }
                     }
                 }
@@ -392,7 +447,7 @@ namespace ZaczytywanieKodow
                 {
                     if (kodyLista.Rows[e.RowIndex].Cells["twrGidNumer"].Value.ToString() != "0")
                     {
-                        using (var forma = new Szczegoly(Convert.ToInt32(kodyLista.Rows[e.RowIndex].Cells["twrGidNumer"].Value)))
+                        using (var forma = new Szczegoly(Convert.ToInt32(kodyLista.Rows[e.RowIndex].Cells["twrGidNumer"].Value.ToString())))
                         {
                             forma.ShowDialog();
                         }

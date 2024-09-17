@@ -16,7 +16,7 @@ namespace ZaczytywanieKodow.Views
         public WyszukiwaniaForm(List<Item> items)
         {
             InitializeComponent();
-            foreach (Item item in items) 
+            foreach (Item item in items.Distinct()) 
             {
                 dataGridView1.Rows.Add(item.KodOem, item.Zastosowanie, item.Wyszukiwania);
             }

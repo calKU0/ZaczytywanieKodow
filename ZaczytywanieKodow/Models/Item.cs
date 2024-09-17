@@ -8,12 +8,12 @@ namespace ZaczytywanieKodow.Models
 {
     public class Item
     {
-        public int Id { get; set; }
         public List<int> TwrGidNumer { get; set; }
         public List<string> Nazwa { get; set; }
         public List<string> KodSystem { get; set; }
         public string KodDostawcy { get; set; }
         public string KodOem { get; set; }
+        public List<int> Stan { get; set; }
         public string CenaZakupu { get; set; }
         public string Zastosowanie { get; set; }
         public List<string> Dostawca { get; set; }
@@ -27,6 +27,7 @@ namespace ZaczytywanieKodow.Models
         {
             KodSystem = new List<string>();
             Nazwa = new List<string>();
+            Stan = new List<int>();
             Dostawca = new List<string>();
             TwrGidNumer = new List<int>();
             OstatniaCenaZakupu = new List<decimal>();

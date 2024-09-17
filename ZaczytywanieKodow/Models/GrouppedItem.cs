@@ -10,6 +10,7 @@ namespace ZaczytywanieKodow.Models
         public List<string> Nazwa { get; set; }
         public List<decimal> OstatniaCenaZakupu { get; set; }
         public List<string> Waluta { get; set; }
+        public List<int> Stan { get; set; }
         public string KodDostawcy { get; set; }
         public string CenaZakupu { get; set; }
         public string Zastosowanie { get; set; }
@@ -23,6 +24,7 @@ namespace ZaczytywanieKodow.Models
             KodSystem = new List<string>();
             Nazwa = new List<string>();
             Dostawca = new List<string>();
+            Stan = new List<int>();
             TwrGidNumer = new List<int>();
             OstatniaCenaZakupu = new List<decimal>();
             Waluta = new List<string>();
